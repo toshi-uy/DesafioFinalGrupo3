@@ -1,5 +1,6 @@
 package grupo3.desafioFinalBootcamp.controller;
 
+import grupo3.desafioFinalBootcamp.exceptions.UnableToDelete;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import grupo3.desafioFinalBootcamp.services.HotelService;
@@ -25,7 +26,7 @@ public class HotelController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<StatusDTO> deleteHotel(@RequestParam String hotelCode) {
+    public ResponseEntity<StatusDTO> deleteHotel(@RequestParam String hotelCode) throws UnableToDelete {
         return new ResponseEntity<>(service.deleteHotelByHotelCode(hotelCode), HttpStatus.OK);
     }
 

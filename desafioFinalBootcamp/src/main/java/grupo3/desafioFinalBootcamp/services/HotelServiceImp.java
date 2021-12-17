@@ -85,7 +85,7 @@ public class HotelServiceImp implements HotelService {
     }
 
     // BAJAS
-    public StatusDTO deleteHotelByHotelCode(String hotelCode) {
+    public StatusDTO deleteHotelByHotelCode(String hotelCode) throws UnableToDelete {
         Hotel hotel = repo.findByHotelCode(hotelCode);
         List<HotelBooking> hotelBookingList = bookingRepo.findAll();
         for (HotelBooking hb:hotelBookingList) {
