@@ -30,7 +30,7 @@ public class HotelController {
     }
 
 
-    @GetMapping("/hotels")
+    @GetMapping
     public ResponseEntity<List<HotelDTO>> getHotels(@RequestParam(required = false) String dateFrom, @RequestParam(required = false) String dateTo, @RequestParam(required = false) String destination) throws Exception {
 
         if (dateFrom == null || dateTo == null || destination == null)
@@ -42,7 +42,7 @@ public class HotelController {
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<StatusDTO> editHotelByCode(@RequestParam String hotelCode) {
-        return new ResponseEntity<>(service.editHotelByCode(hotelCode), HttpStatus.OK);
+    public ResponseEntity<StatusDTO> editHotelByCode(@RequestParam String hotelCode, @RequestBody HotelDTO hotelDTO) {
+        return new ResponseEntity<>(service.editHotelByCode(hotelCode, hotelDTO), HttpStatus.OK);
     }
 }

@@ -22,25 +22,37 @@ public class Hotel {
     private Integer id;
     private String hotelCode;
     private String name;
-    private String destination;
+    private String place;
     private String roomType;
-    private int priceByNight;
+    private int roomPrice;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
-    private Date dateFrom;
+    private Date disponibilityDateFrom;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
-    private Date dateTo;
-    private boolean booked;
-    @OneToMany(mappedBy = "hotel")
+    private Date disponibilityDateTo;
+    private Boolean isBooking;
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
     private List<HotelBooking> hotelBooking_hotel;
 
-    public Hotel(String hotelCode, String name, String destination, String roomType, int priceByNight, Date dateFrom, Date dateTo, boolean booked) {
+    public Hotel(String hotelCode, String name, String place, String roomType, int roomPrice, Date disponibilityDateFrom, Date disponibilityDateTo, boolean isBooking) {
         this.hotelCode = hotelCode;
         this.name = name;
-        this.destination = destination;
+        this.place = place;
         this.roomType = roomType;
-        this.priceByNight = priceByNight;
-        this.dateFrom = dateFrom;
-        this.dateTo = dateTo;
-        this.booked = booked;
+        this.roomPrice = roomPrice;
+        this.disponibilityDateFrom = disponibilityDateFrom;
+        this.disponibilityDateTo = disponibilityDateTo;
+        this.isBooking = isBooking;
+    }
+
+    public Hotel(Integer id, String hotelCode, String name, String place, String roomType, int roomPrice, Date disponibilityDateFrom, Date disponibilityDateTo, Boolean isBooking) {
+        this.id = id;
+        this.hotelCode = hotelCode;
+        this.name = name;
+        this.place = place;
+        this.roomType = roomType;
+        this.roomPrice = roomPrice;
+        this.disponibilityDateFrom = disponibilityDateFrom;
+        this.disponibilityDateTo = disponibilityDateTo;
+        this.isBooking = isBooking;
     }
 }

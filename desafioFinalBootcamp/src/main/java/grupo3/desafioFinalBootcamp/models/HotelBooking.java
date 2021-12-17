@@ -40,11 +40,11 @@ public class HotelBooking {
             inverseJoinColumns = @JoinColumn(name = "people_id"))
     private List<Person> peopleHotel;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_method_id", referencedColumnName = "id")
     private PaymentMethod paymentmethod;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 

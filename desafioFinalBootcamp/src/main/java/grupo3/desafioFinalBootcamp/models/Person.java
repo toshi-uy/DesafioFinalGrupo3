@@ -25,10 +25,10 @@ public class Person {
     private Date birthDate;
     private String mail;
 
-    @ManyToMany(mappedBy = "peopleFlight")
+    @ManyToMany(mappedBy = "peopleFlight", cascade = CascadeType.ALL)
     private List<FlightReservation> flightReservationList;
 
-    @ManyToMany(mappedBy = "peopleHotel")
+    @ManyToMany(mappedBy = "peopleHotel", cascade = CascadeType.ALL)
     private List<HotelBooking> hotelBookingList;
 
     public Person(String dni, String name, String lastname, Date birthDate, String mail) {

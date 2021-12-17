@@ -11,9 +11,9 @@ public interface HotelService {
 
     StatusDTO deleteHotelByHotelCode(String hotelCode);
 
-    List<HotelDTO> getHotels();
+    List<HotelDTO> getHotels() throws Exception;
 
-    List<HotelDTO> getListedHotels(String dateFrom, String dateTo, String destination);
+    List<HotelDTO> getListedHotels(String dateFrom, String dateTo, String destination) throws Exception;
 
-    StatusDTO editHotelByCode(String hotelCode);
+    StatusDTO editHotelByCode(String hotelCode, HotelDTO hotelDTO);
 }

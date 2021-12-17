@@ -25,22 +25,34 @@ public class Flight {
     private String origin;
     private String destination;
     private String seatType;
-    private double price;
+    private double flightPrice;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date goingDate;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date returnDate;
 
-    @OneToMany(mappedBy = "flight")
+    @OneToMany(mappedBy = "flight", cascade = CascadeType.ALL)
     private List<FlightReservation> flightReservations;
 
-    public Flight(String flightNumber, String name, String origin, String destination, String seatType, double price, Date goingDate, Date returnDate) {
+    public Flight(String flightNumber, String name, String origin, String destination, String seatType, double flightPrice, Date goingDate, Date returnDate) {
         this.flightNumber = flightNumber;
         this.name = name;
         this.origin = origin;
         this.destination = destination;
         this.seatType = seatType;
-        this.price = price;
+        this.flightPrice = flightPrice;
+        this.goingDate = goingDate;
+        this.returnDate = returnDate;
+    }
+
+    public Flight(Integer id, String flightNumber, String name, String origin, String destination, String seatType, double flightPrice, Date goingDate, Date returnDate) {
+        this.id = id;
+        this.flightNumber = flightNumber;
+        this.name = name;
+        this.origin = origin;
+        this.destination = destination;
+        this.seatType = seatType;
+        this.flightPrice = flightPrice;
         this.goingDate = goingDate;
         this.returnDate = returnDate;
     }

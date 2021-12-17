@@ -13,11 +13,8 @@ import java.util.List;
 @Repository
 public interface HotelRepository extends JpaRepository<Hotel, Integer> {
 
-    @Query("SELECT h FROM Hotel h WHERE h.dateFrom >= :datefrom AND h.dateTo <= :dateto AND h.destination = :destination ")
-    List<Hotel> findListedHotels(@Param("datefrom") Date datefrom, @Param("dateto") Date dateto, @Param("destination") String destination);
-
-    @Query("DELETE FROM Hotel h WHERE h.hotelCode = :hotelCode")
-    StatusDTO deleteHotelByHotelCode(@Param("hotelCode") String hotelCode);
+    @Query("SELECT h FROM Hotel h WHERE h.disponibilityDateFrom >= :datefrom AND h.disponibilityDateTo <= :dateto AND h.place = :place ")
+    List<Hotel> findListedHotels(@Param("datefrom") Date datefrom, @Param("dateto") Date dateto, @Param("place") String place);
 
     @Query("SELECT h FROM Hotel h WHERE h.hotelCode LIKE :hotelCode")
     Hotel findByHotelCode(@Param("hotelCode") String hotelCode);

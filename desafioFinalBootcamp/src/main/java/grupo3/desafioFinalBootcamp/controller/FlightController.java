@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/flights")
 public class FlightController {
     private final FlightService flightService;
 
@@ -28,7 +28,7 @@ public class FlightController {
         return new ResponseEntity<>(flightService.deleteFlightByFlightNumber(flightNumber), HttpStatus.OK);
     }
 
-    @GetMapping("/flights")
+    @GetMapping
     public ResponseEntity<List<FlightDTO>> getHotels(@RequestParam(required = false) String dateFrom, @RequestParam(required = false) String dateTo, @RequestParam(required = false) String origin, @RequestParam(required = false) String destination) throws Exception {
 
         if (dateFrom == null || dateTo == null || origin == null || destination == null)
@@ -37,5 +37,10 @@ public class FlightController {
             else
                 return new ResponseEntity<>(flightService.getFlights(), HttpStatus.OK);
         return new ResponseEntity<>(flightService.getListedFlights(dateFrom, dateTo, origin, destination), HttpStatus.OK);
+    }
+
+    @PutMapping("/edit")
+    public ResponseEntity<StatusDTO> editHotelByCode(@RequestParam String hotelCode, @RequestBody FlightDTO flightDTO) {
+        return new ResponseEntity<>(flightService.editFlightByCode(hotelCode, flightDTO), HttpStatus.OK);
     }
 }

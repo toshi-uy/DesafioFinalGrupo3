@@ -10,10 +10,10 @@ public interface FlightService {
 
     StatusDTO deleteFlightByFlightNumber(String flightNumber);
 
-    StatusDTO editFlightByCode(String flightNumber);
+    StatusDTO editFlightByCode(String flightNumber, FlightDTO flightDTO);
 
-    List<FlightDTO> getListedFlights(String dateFrom, String dateTo, String origin, String destination);
+    List<FlightDTO> getListedFlights(String dateFrom, String dateTo, String origin, String destination) throws Exception ;
 
-    List<FlightDTO> getFlights();
+    List<FlightDTO> getFlights() throws Exception;
 
 }

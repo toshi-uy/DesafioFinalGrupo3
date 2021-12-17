@@ -1,5 +1,6 @@
 package grupo3.desafioFinalBootcamp.services;
 
+import grupo3.desafioFinalBootcamp.exceptions.NoData;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
@@ -51,16 +52,22 @@ public class ReservationServiceImp implements ReservationService {
 
 
     // CONSULTAS/LECTURAS
-    public List<HotelBookingDTO> getHotelBookings() {
+    public List<HotelBookingDTO> getHotelBookings() throws Exception {
         List<HotelBooking> hotelBookingList = bookingRepo.findAll();
-        return hotelBookingList.stream().map(hotelBookingDTO -> mapper.map(hotelBookingDTO, HotelBookingDTO.class)).collect(Collectors.toList());
+        List<HotelBookingDTO> hotelBookingDTOList = hotelBookingList.stream().map(hotelBookingDTO -> mapper.map(hotelBookingDTO, HotelBookingDTO.class)).collect(Collectors.toList());
+        if (hotelBookingDTOList.size() == 0)
+            throw new NoData("There are no hotel bookings");
 
+        return hotelBookingDTOList;
     }
 
-    public List<FlightReservationDTO> getFlightReservations() {
-        List<FlightReservation> flightReservationList = reservationRepo.findAll();
-        return flightReservationList.stream().map(flightReservationDTO -> mapper.map(flightReservationDTO, FlightReservationDTO.class)).collect(Collectors.toList());
+    public List<FlightReservationDTO> getFlightReservations() throws Exception {
 
+        List<FlightReservation> flightReservationList = reservationRepo.findAll();
+        List<FlightReservationDTO> flightReservationDTOList = flightReservationList.stream().map(flightReservationDTO -> mapper.map(flightReservationDTO, FlightReservationDTO.class)).collect(Collectors.toList());
+        if (flightReservationDTOList.size() == 0)
+            throw new NoData("There are no flight bookings");
+        return flightReservationDTOList;
     }
 
     // BAJAS

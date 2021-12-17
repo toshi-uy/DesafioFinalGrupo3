@@ -18,24 +18,24 @@ public class HotelDTO {
     private Integer id;
     private String hotelCode;
     private String name;
-    private String destination;
+    private String place;
     private String roomType;
-    private int priceByNight;
+    private int roomPrice;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
-    private Date dateFrom;
+    private Date disponibilityDateFrom;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
-    private Date dateTo;
-    private boolean booked;
+    private Date disponibilityDateTo;
+    private Boolean isBooking;
     private List<HotelBookingDTO> hotelBooking_hotel;
 
-    public HotelDTO(String hotelCode, String name, String destination, String roomType, int priceByNight, Date dateFrom, Date dateTo, boolean booked) {
+    public HotelDTO(String hotelCode, String name, String place, String roomType, int roomPrice, Date disponibilityDateFrom, Date disponibilityDateTo, boolean isBooking) {
         this.hotelCode = hotelCode;
         this.name = name;
-        this.destination = destination;
+        this.place = place;
         this.roomType = roomType;
-        this.priceByNight = priceByNight;
-        this.dateFrom = dateFrom;
-        this.dateTo = dateTo;
-        this.booked = booked;
+        this.roomPrice = roomPrice;
+        this.disponibilityDateFrom = disponibilityDateFrom;
+        this.disponibilityDateTo = disponibilityDateTo;
+        this.isBooking = isBooking;
     }
 }

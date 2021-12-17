@@ -40,15 +40,15 @@ public class FlightReservation {
     )
     private List<Person> peopleFlight;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_method_id", referencedColumnName = "id")
     private PaymentMethod paymentMethod;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "flight_id", referencedColumnName = "id", nullable = false)
     private Flight flight;
 
-    public FlightReservation(Date goingDate, Date returnDate, String origin, String destination, String flightNumber, Integer seats, String seatType, List<Person> peopleFlight, PaymentMethod paymentMethod, Flight flight) {
+    public FlightReservation(Date goingDate, Date returnDate, String origin, String destination, String flightNumber, Integer seats, String seatType, List<Person> peopleFlight, PaymentMethod paymentMethod) {
         this.goingDate = goingDate;
         this.returnDate = returnDate;
         this.origin = origin;
@@ -58,6 +58,18 @@ public class FlightReservation {
         this.seatType = seatType;
         this.peopleFlight = peopleFlight;
         this.paymentMethod = paymentMethod;
-        this.flight = flight;
+    }
+
+    public FlightReservation(Integer id, Date goingDate, Date returnDate, String origin, String destination, String flightNumber, Integer seats, String seatType, List<Person> peopleFlight, PaymentMethod paymentMethod) {
+        this.id = id;
+        this.goingDate = goingDate;
+        this.returnDate = returnDate;
+        this.origin = origin;
+        this.destination = destination;
+        this.flightNumber = flightNumber;
+        this.seats = seats;
+        this.seatType = seatType;
+        this.peopleFlight = peopleFlight;
+        this.paymentMethod = paymentMethod;
     }
 }
