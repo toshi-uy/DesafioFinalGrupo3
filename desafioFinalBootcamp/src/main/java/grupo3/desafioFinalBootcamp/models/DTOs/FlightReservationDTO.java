@@ -1,4 +1,4 @@
-package grupo3.desafioFinalBootcamp.models;
+package grupo3.desafioFinalBootcamp.models.DTOs;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -6,49 +6,30 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "flight_reservations")
-public class FlightReservation {
+public class FlightReservationDTO {
 
-    @Id
     private Integer id;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date goingDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date returnDate;
-
     private String origin;
     private String destination;
     private String flightNumber;
     private Integer seats;
     private String seatType;
+    private List<PersonDTO> peopleFlight;
+    private PaymentMethodDTO paymentMethod;
+    private FlightDTO flight;
 
-    @ManyToMany
-    @JoinTable(
-            name = "reservation_people",
-            joinColumns = @JoinColumn(name = "reservation_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "people_id", referencedColumnName = "id")
-    )
-    private List<Person> peopleFlight;
-
-    @ManyToOne
-    @JoinColumn(name = "payment_method_id", referencedColumnName = "id")
-    private PaymentMethod paymentMethod;
-
-    @ManyToOne
-    @JoinColumn(name = "flight_id", referencedColumnName = "id", nullable = false)
-    private Flight flight;
-
-    public FlightReservation(Date goingDate, Date returnDate, String origin, String destination, String flightNumber, Integer seats, String seatType, List<Person> peopleFlight, PaymentMethod paymentMethod, Flight flight) {
+    public FlightReservationDTO(Date goingDate, Date returnDate, String origin, String destination, String flightNumber, Integer seats, String seatType, List<PersonDTO> peopleFlight, PaymentMethodDTO paymentMethod, FlightDTO flight) {
         this.goingDate = goingDate;
         this.returnDate = returnDate;
         this.origin = origin;

@@ -1,4 +1,4 @@
-package grupo3.desafioFinalBootcamp.models;
+package grupo3.desafioFinalBootcamp.models.DTOs;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
@@ -14,11 +13,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "hotels")
-public class Hotel {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+
+public class HotelDTO {
     private Integer id;
     private String hotelCode;
     private String name;
@@ -30,10 +26,9 @@ public class Hotel {
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date dateTo;
     private boolean booked;
-    @OneToMany(mappedBy = "hotel")
-    private List<HotelBooking> hotelBooking_hotel;
+    private List<HotelBookingDTO> hotelBooking_hotel;
 
-    public Hotel(String hotelCode, String name, String destination, String roomType, int priceByNight, Date dateFrom, Date dateTo, boolean booked) {
+    public HotelDTO(String hotelCode, String name, String destination, String roomType, int priceByNight, Date dateFrom, Date dateTo, boolean booked) {
         this.hotelCode = hotelCode;
         this.name = name;
         this.destination = destination;

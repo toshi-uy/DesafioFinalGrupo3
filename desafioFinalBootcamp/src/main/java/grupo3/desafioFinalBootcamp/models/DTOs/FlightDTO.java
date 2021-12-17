@@ -1,4 +1,4 @@
-package grupo3.desafioFinalBootcamp.models;
+package grupo3.desafioFinalBootcamp.models.DTOs;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -6,19 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "flights")
-public class Flight {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+public class FlightDTO {
+
     private Integer id;
     private String flightNumber;
     private String name;
@@ -30,11 +26,9 @@ public class Flight {
     private Date goingDate;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date returnDate;
+    private List<FlightReservationDTO> flightReservations;
 
-    @OneToMany(mappedBy = "flight")
-    private List<FlightReservation> flightReservations;
-
-    public Flight(String flightNumber, String name, String origin, String destination, String seatType, double price, Date goingDate, Date returnDate) {
+    public FlightDTO(String flightNumber, String name, String origin, String destination, String seatType, double price, Date goingDate, Date returnDate) {
         this.flightNumber = flightNumber;
         this.name = name;
         this.origin = origin;
