@@ -41,13 +41,13 @@ public class ReservationController {
     }
 
     @PutMapping("/hotel-booking/edit")
-    public ResponseEntity<StatusDTO> editHotelBooking(@RequestParam Integer id) {
-        return new ResponseEntity<>(service.editHotelBooking(id), HttpStatus.OK);
+    public ResponseEntity<StatusDTO> editHotelBooking(@RequestParam Integer id, @RequestBody HotelBookingDTO hotelBookingDTO) {
+        return new ResponseEntity<>(service.editHotelBooking(id, hotelBookingDTO), HttpStatus.OK);
     }
 
     @PutMapping("/flight-reservation/edit")
-    public ResponseEntity<StatusDTO> editFlightReservation(@RequestParam Integer id) {
-        return new ResponseEntity<>(service.editFlightReservation(id), HttpStatus.OK);
+    public ResponseEntity<StatusDTO> editFlightReservation(@RequestParam Integer id, @RequestBody FlightReservationDTO flightReservationDTO) {
+        return new ResponseEntity<>(service.editFlightReservation(id, flightReservationDTO), HttpStatus.OK);
     }
 
     @GetMapping("/flight-reservations")

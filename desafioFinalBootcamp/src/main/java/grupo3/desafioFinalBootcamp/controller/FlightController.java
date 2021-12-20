@@ -1,5 +1,6 @@
 package grupo3.desafioFinalBootcamp.controller;
 
+import grupo3.desafioFinalBootcamp.exceptions.NoFlightFound;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import grupo3.desafioFinalBootcamp.services.FlightService;
@@ -24,7 +25,7 @@ public class FlightController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<StatusDTO> deleteFlight(@RequestParam String flightNumber) {
+    public ResponseEntity<StatusDTO> deleteFlight(@RequestParam String flightNumber) throws NoFlightFound {
         return new ResponseEntity<>(flightService.deleteFlightByFlightNumber(flightNumber), HttpStatus.OK);
     }
 
@@ -40,7 +41,7 @@ public class FlightController {
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<StatusDTO> editHotelByCode(@RequestParam String hotelCode, @RequestBody FlightDTO flightDTO) {
+    public ResponseEntity<StatusDTO> editHotelByCode(@RequestParam String hotelCode, @RequestBody FlightDTO flightDTO) throws NoFlightFound {
         return new ResponseEntity<>(flightService.editFlightByCode(hotelCode, flightDTO), HttpStatus.OK);
     }
 }

@@ -1,10 +1,10 @@
 package grupo3.desafioFinalBootcamp.services;
 
 import grupo3.desafioFinalBootcamp.exceptions.NoData;
+import grupo3.desafioFinalBootcamp.exceptions.NoFlightFound;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import grupo3.desafioFinalBootcamp.models.Flight;
-import grupo3.desafioFinalBootcamp.models.Hotel;
 import grupo3.desafioFinalBootcamp.repositories.FlightRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -33,8 +33,12 @@ public class FlightServiceImp implements FlightService {
 
     // MODIFICACIONES
     @Override
-    public StatusDTO editFlightByCode(String flightNumber, FlightDTO flightDTO) {
-        Flight flight = new Flight(repo.findByFlightNumber(flightNumber).getId(), flightDTO.getFlightNumber(),
+    public StatusDTO editFlightByCode(String flightNumber, FlightDTO flightDTO) throws NoFlightFound {
+        Flight flightCheck = repo.findByFlightNumber(flightNumber);
+        if (flightCheck == null) {
+            throw new NoFlightFound();
+        }
+        Flight flight = new Flight(flightCheck.getId(), flightDTO.getFlightNumber(),
                 flightDTO.getName(), flightDTO.getOrigin(), flightDTO.getDestination(), flightDTO.getSeatType(),
                 flightDTO.getFlightPrice(), flightDTO.getGoingDate(), flightDTO.getReturnDate());
         repo.save(flight);
@@ -44,7 +48,6 @@ public class FlightServiceImp implements FlightService {
     // CONSULTAS/LECTURAS
     @Override
     public List<FlightDTO> getFlights() throws Exception {
-
             List<Flight> flightList = repo.findAll();
             List<FlightDTO> flightDTOList = flightList.stream().map(flightDTO -> mapper.map(flightDTO, FlightDTO.class)).collect(Collectors.toList());
             if (flightDTOList.size() == 0)
@@ -73,8 +76,11 @@ public class FlightServiceImp implements FlightService {
 
     // BAJAS
     @Override
-    public StatusDTO deleteFlightByFlightNumber(String flightNumber) {
+    public StatusDTO deleteFlightByFlightNumber(String flightNumber) throws NoFlightFound {
         Flight flight = repo.findByFlightNumber(flightNumber);
+        if (flight == null) {
+            throw new NoFlightFound();
+        }
         repo.delete(flight);
         return new StatusDTO("Vuelo dado de baja correctamente");
     }

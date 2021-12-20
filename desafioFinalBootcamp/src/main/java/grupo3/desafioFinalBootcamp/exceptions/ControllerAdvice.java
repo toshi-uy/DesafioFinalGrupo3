@@ -43,4 +43,17 @@ public class ControllerAdvice {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NoHotelFound.class)
+    public ResponseEntity<StatusDTO> duplicateId(NoHotelFound ex) {
+        StatusDTO error = new StatusDTO();
+        error.setMessage(ex.ERROR);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NoFlightFound.class)
+    public ResponseEntity<StatusDTO> duplicateId(NoFlightFound ex) {
+        StatusDTO error = new StatusDTO();
+        error.setMessage(ex.ERROR);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -1,9 +1,6 @@
 package grupo3.desafioFinalBootcamp.services;
 
-import grupo3.desafioFinalBootcamp.exceptions.DuplicateHotelCode;
-import grupo3.desafioFinalBootcamp.exceptions.DuplicateHotelId;
-import grupo3.desafioFinalBootcamp.exceptions.NoData;
-import grupo3.desafioFinalBootcamp.exceptions.UnableToDelete;
+import grupo3.desafioFinalBootcamp.exceptions.*;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import grupo3.desafioFinalBootcamp.models.Hotel;
@@ -49,8 +46,12 @@ public class HotelServiceImp implements HotelService {
     }
 
     // MODIFICACIONES
-    public StatusDTO editHotelByCode(String hotelCode, HotelDTO hotelDTO) {
-        Hotel hotel = new Hotel(repo.findByHotelCode(hotelCode).getId(), hotelDTO.getHotelCode(), hotelDTO.getName(), hotelDTO.getPlace(), hotelDTO.getRoomType(), hotelDTO.getRoomPrice(), hotelDTO.getDisponibilityDateFrom(), hotelDTO.getDisponibilityDateTo(), hotelDTO.getIsBooking());
+    public StatusDTO editHotelByCode(String hotelCode, HotelDTO hotelDTO) throws NoHotelFound {
+        Hotel hotelCheck = repo.findByHotelCode(hotelCode);
+        if (hotelCheck == null) {
+            throw new NoHotelFound();
+        }
+        Hotel hotel = new Hotel(hotelCheck.getId(), hotelDTO.getHotelCode(), hotelDTO.getName(), hotelDTO.getPlace(), hotelDTO.getRoomType(), hotelDTO.getRoomPrice(), hotelDTO.getDisponibilityDateFrom(), hotelDTO.getDisponibilityDateTo(), hotelDTO.getIsBooking());
         repo.save(hotel);
         return new StatusDTO("Hotel modificado correctamente");
     }
@@ -85,8 +86,11 @@ public class HotelServiceImp implements HotelService {
     }
 
     // BAJAS
-    public StatusDTO deleteHotelByHotelCode(String hotelCode) throws UnableToDelete {
+    public StatusDTO deleteHotelByHotelCode(String hotelCode) throws UnableToDelete, NoHotelFound {
         Hotel hotel = repo.findByHotelCode(hotelCode);
+        if (hotel == null) {
+            throw new NoHotelFound();
+        }
         List<HotelBooking> hotelBookingList = bookingRepo.findAll();
         for (HotelBooking hb:hotelBookingList) {
             if(hb.getHotel().getHotelCode().equals(hotelCode))

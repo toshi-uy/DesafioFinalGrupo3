@@ -15,9 +15,9 @@ public interface ReservationService {
 
     StatusDTO deleteFlightReservation(Integer id);
 
-    StatusDTO editHotelBooking(Integer id);
+    StatusDTO editHotelBooking(Integer id, HotelBookingDTO hotelBookingDTO);
 
-    StatusDTO editFlightReservation(Integer id);
+    StatusDTO editFlightReservation(Integer id, FlightReservationDTO flightReservationDTO);
 
     List<HotelBookingDTO> getHotelBookings() throws Exception;
 

@@ -1,5 +1,8 @@
 package grupo3.desafioFinalBootcamp.controller;
 
+import grupo3.desafioFinalBootcamp.exceptions.DuplicateHotelCode;
+import grupo3.desafioFinalBootcamp.exceptions.DuplicateHotelId;
+import grupo3.desafioFinalBootcamp.exceptions.NoHotelFound;
 import grupo3.desafioFinalBootcamp.exceptions.UnableToDelete;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
@@ -21,12 +24,12 @@ public class HotelController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<StatusDTO> addHotel(@RequestBody HotelDTO hotel) {
+    public ResponseEntity<StatusDTO> addHotel(@RequestBody HotelDTO hotel) throws DuplicateHotelCode, DuplicateHotelId {
         return new ResponseEntity<>(service.addHotel(hotel), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<StatusDTO> deleteHotel(@RequestParam String hotelCode) throws UnableToDelete {
+    public ResponseEntity<StatusDTO> deleteHotel(@RequestParam String hotelCode) throws UnableToDelete, NoHotelFound {
         return new ResponseEntity<>(service.deleteHotelByHotelCode(hotelCode), HttpStatus.OK);
     }
 
@@ -43,7 +46,7 @@ public class HotelController {
     }
 
     @PutMapping("/edit")
-    public ResponseEntity<StatusDTO> editHotelByCode(@RequestParam String hotelCode, @RequestBody HotelDTO hotelDTO) {
+    public ResponseEntity<StatusDTO> editHotelByCode(@RequestParam String hotelCode, @RequestBody HotelDTO hotelDTO) throws NoHotelFound {
         return new ResponseEntity<>(service.editHotelByCode(hotelCode, hotelDTO), HttpStatus.OK);
     }
 }

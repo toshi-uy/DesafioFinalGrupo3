@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 public class ReservationServiceImp implements ReservationService {
 
     ModelMapper mapper = new ModelMapper();
-    private HotelBookingRepository bookingRepo;
-    private FlightReservationRepository reservationRepo;
+    private final HotelBookingRepository bookingRepo;
+    private final FlightReservationRepository reservationRepo;
 
     public ReservationServiceImp(HotelBookingRepository bookingRepo, FlightReservationRepository reservationRepo) {
         this.bookingRepo = bookingRepo;
@@ -40,13 +40,17 @@ public class ReservationServiceImp implements ReservationService {
     }
 
     // MODIFICACIONES
-    public StatusDTO editHotelBooking(Integer id) {
-        bookingRepo.save(bookingRepo.findById(id).get());
+    public StatusDTO editHotelBooking(Integer id, HotelBookingDTO hotelBookingDTO) {
+        HotelBooking modified = mapper.map(hotelBookingDTO, HotelBooking.class);
+        modified.setId(id);
+        bookingRepo.save(modified);
         return new StatusDTO("Reserva de hotel modificada correctamente");
     }
 
-    public StatusDTO editFlightReservation(Integer id) {
-        reservationRepo.save(reservationRepo.findById(id).get());
+    public StatusDTO editFlightReservation(Integer id, FlightReservationDTO flightReservationDTO) {
+        FlightReservation modified = mapper.map(flightReservationDTO, FlightReservation.class);
+        modified.setId(id);
+        reservationRepo.save(modified);
         return new StatusDTO("Reserva de vuelo modificada correctamente");
     }
 
