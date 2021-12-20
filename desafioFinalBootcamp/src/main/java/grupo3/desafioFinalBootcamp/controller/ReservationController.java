@@ -1,5 +1,9 @@
 package grupo3.desafioFinalBootcamp.controller;
 
+import grupo3.desafioFinalBootcamp.exceptions.DuplicateBooking;
+import grupo3.desafioFinalBootcamp.exceptions.DuplicateReservation;
+import grupo3.desafioFinalBootcamp.exceptions.NoBookingFound;
+import grupo3.desafioFinalBootcamp.exceptions.NoReservationFound;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
@@ -19,17 +23,18 @@ public class ReservationController {
         this.service = service;
     }
 
+    // ALTAS
     @PostMapping("/hotel-booking/new")
-    public ResponseEntity<StatusDTO> addHotelBooking(@RequestBody HotelBookingDTO booking) {
+    public ResponseEntity<StatusDTO> addHotelBooking(@RequestBody HotelBookingDTO booking) throws DuplicateBooking {
         return new ResponseEntity<>(service.addBooking(booking), HttpStatus.OK);
     }
 
     @PostMapping("/flight-reservation/new")
-    public ResponseEntity<StatusDTO> addFlightReservation(@RequestBody FlightReservationDTO reservation) {
+    public ResponseEntity<StatusDTO> addFlightReservation(@RequestBody FlightReservationDTO reservation) throws DuplicateReservation {
         return new ResponseEntity<>(service.addReservation(reservation), HttpStatus.OK);
     }
 
-
+    // BAJAS
     @DeleteMapping("/hotel-booking/delete")
     public ResponseEntity<StatusDTO> deleteHotelBooking(@RequestParam Integer id) {
         return new ResponseEntity<>(service.deleteHotelBooking(id), HttpStatus.OK);
@@ -40,16 +45,18 @@ public class ReservationController {
         return new ResponseEntity<>(service.deleteFlightReservation(id), HttpStatus.OK);
     }
 
+    // MODIFICACIONES
     @PutMapping("/hotel-booking/edit")
-    public ResponseEntity<StatusDTO> editHotelBooking(@RequestParam Integer id, @RequestBody HotelBookingDTO hotelBookingDTO) {
+    public ResponseEntity<StatusDTO> editHotelBooking(@RequestParam Integer id, @RequestBody HotelBookingDTO hotelBookingDTO) throws NoBookingFound {
         return new ResponseEntity<>(service.editHotelBooking(id, hotelBookingDTO), HttpStatus.OK);
     }
 
     @PutMapping("/flight-reservation/edit")
-    public ResponseEntity<StatusDTO> editFlightReservation(@RequestParam Integer id, @RequestBody FlightReservationDTO flightReservationDTO) {
+    public ResponseEntity<StatusDTO> editFlightReservation(@RequestParam Integer id, @RequestBody FlightReservationDTO flightReservationDTO) throws NoReservationFound {
         return new ResponseEntity<>(service.editFlightReservation(id, flightReservationDTO), HttpStatus.OK);
     }
 
+    // CONSULTAS/LECTURAS
     @GetMapping("/flight-reservations")
     public ResponseEntity<List<FlightReservationDTO>> getFlightReservation() throws Exception {
         return new ResponseEntity<>(service.getFlightReservations(), HttpStatus.OK);

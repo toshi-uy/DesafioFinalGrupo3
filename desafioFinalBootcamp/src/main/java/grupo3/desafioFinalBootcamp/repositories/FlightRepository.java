@@ -16,7 +16,7 @@ public interface FlightRepository extends JpaRepository<Flight, Integer> {
     List<Flight> getAll();
 
     @Query("FROM Flight f WHERE f.id = :id")
-    Flight findById(@Param("id") int id);
+    Flight findFlightById(@Param("id") int id);
 
     @Query("DELETE FROM Flight f WHERE f.flightNumber = :flightNumber")
     StatusDTO deleteFlightByFlightNumber(@Param("flightNumber") String flightNumber);

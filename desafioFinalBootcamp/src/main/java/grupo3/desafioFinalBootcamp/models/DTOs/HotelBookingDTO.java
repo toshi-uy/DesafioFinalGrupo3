@@ -27,7 +27,6 @@ public class HotelBookingDTO {
     private String roomType;
     private List<PersonDTO> peopleHotel;
     private PaymentMethodDTO paymentmethod;
-    private HotelDTO hotel;
 
     public HotelBookingDTO(Date datefrom, Date dateto, String destination, String hotelcode, Integer peopleAmount, String roomType, List<PersonDTO> peopleHotel, PaymentMethodDTO paymentMethod) {
         this.dateFrom = datefrom;

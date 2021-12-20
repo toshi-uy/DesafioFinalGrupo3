@@ -20,7 +20,7 @@ public class FlightReservation {
 
     @Id
     private Integer id;
-
+    private String userName;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date goingDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
@@ -44,24 +44,8 @@ public class FlightReservation {
     @JoinColumn(name = "payment_method_id", referencedColumnName = "id")
     private PaymentMethod paymentMethod;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "flight_id", referencedColumnName = "id", nullable = false)
-    private Flight flight;
-
-    public FlightReservation(Date goingDate, Date returnDate, String origin, String destination, String flightNumber, Integer seats, String seatType, List<Person> peopleFlight, PaymentMethod paymentMethod) {
-        this.goingDate = goingDate;
-        this.returnDate = returnDate;
-        this.origin = origin;
-        this.destination = destination;
-        this.flightNumber = flightNumber;
-        this.seats = seats;
-        this.seatType = seatType;
-        this.peopleFlight = peopleFlight;
-        this.paymentMethod = paymentMethod;
-    }
-
-    public FlightReservation(Integer id, Date goingDate, Date returnDate, String origin, String destination, String flightNumber, Integer seats, String seatType, List<Person> peopleFlight, PaymentMethod paymentMethod) {
-        this.id = id;
+    public FlightReservation(String userName, Date goingDate, Date returnDate, String origin, String destination, String flightNumber, Integer seats, String seatType, List<Person> peopleFlight, PaymentMethod paymentMethod) {
+        this.userName = userName;
         this.goingDate = goingDate;
         this.returnDate = returnDate;
         this.origin = origin;

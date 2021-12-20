@@ -28,6 +28,18 @@ public class HotelDTO {
     private Boolean isBooking;
     private List<HotelBookingDTO> hotelBooking_hotel;
 
+    public HotelDTO(Integer id, String hotelCode, String name, String place, String roomType, int roomPrice, Date disponibilityDateFrom, Date disponibilityDateTo, Boolean isBooking) {
+        this.id = id;
+        this.hotelCode = hotelCode;
+        this.name = name;
+        this.place = place;
+        this.roomType = roomType;
+        this.roomPrice = roomPrice;
+        this.disponibilityDateFrom = disponibilityDateFrom;
+        this.disponibilityDateTo = disponibilityDateTo;
+        this.isBooking = isBooking;
+    }
+
     public HotelDTO(String hotelCode, String name, String place, String roomType, int roomPrice, Date disponibilityDateFrom, Date disponibilityDateTo, boolean isBooking) {
         this.hotelCode = hotelCode;
         this.name = name;

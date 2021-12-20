@@ -1,6 +1,9 @@
 package grupo3.desafioFinalBootcamp.controller;
 
+import grupo3.desafioFinalBootcamp.exceptions.DuplicateFlightId;
+import grupo3.desafioFinalBootcamp.exceptions.DuplicateFlightNumber;
 import grupo3.desafioFinalBootcamp.exceptions.NoFlightFound;
+import grupo3.desafioFinalBootcamp.exceptions.UnableToDeleteFlight;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import grupo3.desafioFinalBootcamp.services.FlightService;
@@ -19,16 +22,19 @@ public class FlightController {
         this.flightService = flightService;
     }
 
+    // ALTAS
     @PostMapping("/new")
-    public ResponseEntity<StatusDTO> addFlight(@RequestBody FlightDTO flight) {
+    public ResponseEntity<StatusDTO> addFlight(@RequestBody FlightDTO flight) throws DuplicateFlightId, DuplicateFlightNumber {
         return new ResponseEntity<>(flightService.addFlight(flight), HttpStatus.OK);
     }
 
+    // BAJAS
     @DeleteMapping("/delete")
-    public ResponseEntity<StatusDTO> deleteFlight(@RequestParam String flightNumber) throws NoFlightFound {
+    public ResponseEntity<StatusDTO> deleteFlight(@RequestParam String flightNumber) throws NoFlightFound, UnableToDeleteFlight {
         return new ResponseEntity<>(flightService.deleteFlightByFlightNumber(flightNumber), HttpStatus.OK);
     }
 
+    // CONSULTAS/LECTURAS
     @GetMapping
     public ResponseEntity<List<FlightDTO>> getHotels(@RequestParam(required = false) String dateFrom, @RequestParam(required = false) String dateTo, @RequestParam(required = false) String origin, @RequestParam(required = false) String destination) throws Exception {
 
@@ -40,6 +46,7 @@ public class FlightController {
         return new ResponseEntity<>(flightService.getListedFlights(dateFrom, dateTo, origin, destination), HttpStatus.OK);
     }
 
+    // MODIFICACIONES
     @PutMapping("/edit")
     public ResponseEntity<StatusDTO> editHotelByCode(@RequestParam String hotelCode, @RequestBody FlightDTO flightDTO) throws NoFlightFound {
         return new ResponseEntity<>(flightService.editFlightByCode(hotelCode, flightDTO), HttpStatus.OK);

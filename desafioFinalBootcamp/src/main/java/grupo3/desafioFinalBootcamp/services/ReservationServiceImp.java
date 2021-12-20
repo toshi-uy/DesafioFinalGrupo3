@@ -1,6 +1,6 @@
 package grupo3.desafioFinalBootcamp.services;
 
-import grupo3.desafioFinalBootcamp.exceptions.NoData;
+import grupo3.desafioFinalBootcamp.exceptions.*;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @Service
 public class ReservationServiceImp implements ReservationService {
 
-    ModelMapper mapper = new ModelMapper();
     private final HotelBookingRepository bookingRepo;
     private final FlightReservationRepository reservationRepo;
+    ModelMapper mapper = new ModelMapper();
 
     public ReservationServiceImp(HotelBookingRepository bookingRepo, FlightReservationRepository reservationRepo) {
         this.bookingRepo = bookingRepo;
@@ -27,27 +27,56 @@ public class ReservationServiceImp implements ReservationService {
     }
 
     // ALTAS
-    public StatusDTO addBooking(HotelBookingDTO booking) {
+    public StatusDTO addBooking(HotelBookingDTO booking) throws DuplicateBooking {
+        List<HotelBooking> reservas = bookingRepo.findAll();
+        for (HotelBooking hb : reservas) {
+            if (hb.getUsername().equals(booking.getUsername()) &&
+                    hb.getDateFrom().equals(booking.getDateFrom()) && hb.getDateTo().equals(booking.getDateTo()) &&
+                    hb.getDestination().equals(booking.getDestination()) && hb.getHotelCode().equals(booking.getHotelCode()) &&
+                    hb.getPeopleAmount() == booking.getPeopleAmount() && hb.getRoomType().equals(booking.getRoomType()) &&
+                    hb.getPeopleHotel().equals(booking.getPeopleHotel()) && hb.getPaymentmethod().equals(booking.getPaymentmethod()))
+                throw new DuplicateBooking();
+        }
         HotelBooking nuevo = mapper.map(booking, HotelBooking.class);
         bookingRepo.save(nuevo);
         return new StatusDTO("Reserva de hotel creada con éxito.");
     }
 
-    public StatusDTO addReservation(FlightReservationDTO reservation) {
+    public StatusDTO addReservation(FlightReservationDTO reservation) throws DuplicateReservation {
+        List<FlightReservation> reservas = reservationRepo.findAll();
+        for (FlightReservation fr : reservas) {
+            if (fr.getFlightNumber().equals(reservation.getFlightNumber()) &&
+                fr.getUserName().equals(reservation.getUsername()) &&
+                fr.getGoingDate().equals(reservation.getGoingDate()) &&
+                fr.getReturnDate().equals(reservation.getReturnDate()) &&
+                fr.getOrigin().equals(reservation.getOrigin()) && fr.getDestination().equals(reservation.getDestination()) &&
+                fr.getSeats() == reservation.getSeats() && fr.getSeatType().equals(reservation.getSeatType()) &&
+                fr.getPeopleFlight().equals(reservation.getPeopleFlight()) &&
+                fr.getPaymentMethod().equals(reservation.getPaymentMethod()))
+                throw new DuplicateReservation();
+        }
         FlightReservation nuevo = mapper.map(reservation, FlightReservation.class);
         reservationRepo.save(nuevo);
         return new StatusDTO("Reserva de vuelo creada con éxito.");
     }
 
     // MODIFICACIONES
-    public StatusDTO editHotelBooking(Integer id, HotelBookingDTO hotelBookingDTO) {
+    public StatusDTO editHotelBooking(Integer id, HotelBookingDTO hotelBookingDTO) throws NoBookingFound {
+        HotelBooking check = bookingRepo.getById(id);
+        if (check == null) {
+            throw new NoBookingFound();
+        }
         HotelBooking modified = mapper.map(hotelBookingDTO, HotelBooking.class);
         modified.setId(id);
         bookingRepo.save(modified);
         return new StatusDTO("Reserva de hotel modificada correctamente");
     }
 
-    public StatusDTO editFlightReservation(Integer id, FlightReservationDTO flightReservationDTO) {
+    public StatusDTO editFlightReservation(Integer id, FlightReservationDTO flightReservationDTO) throws NoReservationFound {
+        FlightReservation check = reservationRepo.getById(id);
+        if (check == null) {
+            throw new NoReservationFound();
+        }
         FlightReservation modified = mapper.map(flightReservationDTO, FlightReservation.class);
         modified.setId(id);
         reservationRepo.save(modified);
@@ -60,7 +89,7 @@ public class ReservationServiceImp implements ReservationService {
         List<HotelBooking> hotelBookingList = bookingRepo.findAll();
         List<HotelBookingDTO> hotelBookingDTOList = hotelBookingList.stream().map(hotelBookingDTO -> mapper.map(hotelBookingDTO, HotelBookingDTO.class)).collect(Collectors.toList());
         if (hotelBookingDTOList.size() == 0)
-            throw new NoData("There are no hotel bookings");
+            throw new NoHotelData();
 
         return hotelBookingDTOList;
     }
@@ -70,7 +99,7 @@ public class ReservationServiceImp implements ReservationService {
         List<FlightReservation> flightReservationList = reservationRepo.findAll();
         List<FlightReservationDTO> flightReservationDTOList = flightReservationList.stream().map(flightReservationDTO -> mapper.map(flightReservationDTO, FlightReservationDTO.class)).collect(Collectors.toList());
         if (flightReservationDTOList.size() == 0)
-            throw new NoData("There are no flight bookings");
+            throw new NoFlightFound();
         return flightReservationDTOList;
     }
 

@@ -1,20 +1,17 @@
 package grupo3.desafioFinalBootcamp.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "flights")
 public class Flight {
     @Id
@@ -30,9 +27,6 @@ public class Flight {
     private Date goingDate;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date returnDate;
-
-    @OneToMany(mappedBy = "flight", cascade = CascadeType.ALL)
-    private List<FlightReservation> flightReservations;
 
     public Flight(String flightNumber, String name, String origin, String destination, String seatType, double flightPrice, Date goingDate, Date returnDate) {
         this.flightNumber = flightNumber;

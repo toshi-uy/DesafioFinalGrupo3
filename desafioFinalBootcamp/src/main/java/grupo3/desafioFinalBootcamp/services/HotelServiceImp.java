@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,17 +30,19 @@ public class HotelServiceImp implements HotelService {
     }
 
     // ALTAS
-    public StatusDTO addHotel(HotelDTO hotel) throws DuplicateHotelId, DuplicateHotelCode{
+    public StatusDTO addHotel(HotelDTO hotel) throws DuplicateHotelId, DuplicateHotelCode {
         Hotel nuevo = mapper.map(hotel, Hotel.class);
-        if(repo.findAll().size() == 0){
+        if (repo.findAll().size() == 0) {
             repo.save(nuevo);
             return new StatusDTO("Hotel creado con éxito.");
         }
-        for (Hotel h: repo.findAll()) {
-            if(h.getId() == hotel.getId())
-                throw new DuplicateHotelId();
-            if(h.getHotelCode() == hotel.getHotelCode())
-                throw new DuplicateHotelCode();
+        Hotel check = repo.findByHotelCode(hotel.getHotelCode());
+        if (check != null) {
+            throw new DuplicateHotelCode();
+        }
+        check = repo.findHotelById(hotel.getId());
+        if (check != null) {
+            throw new DuplicateHotelId();
         }
         repo.save(nuevo);
         return new StatusDTO("Hotel creado con éxito.");
@@ -59,46 +62,55 @@ public class HotelServiceImp implements HotelService {
     // CONSULTAS/LECTURAS
     public List<HotelDTO> getHotels() throws Exception {
 
-            List<Hotel> hotelList = repo.findAll();
-            List<HotelDTO> hotelDTOList = hotelList.stream().map(hotelDTO -> mapper.map(hotelDTO, HotelDTO.class)).collect(Collectors.toList());
+        List<Hotel> hotelList = repo.findAll();
+        List<HotelDTO> hotelDTOList = hotelList.stream().map(hotelDTO -> mapper.map(hotelDTO, HotelDTO.class)).collect(Collectors.toList());
 
-            if (hotelDTOList.size() == 0)
-                throw new Exception("There are no registered hotels");
+        Date newDateFrom;
+        Date newDateTo;
 
-            return hotelDTOList;
+        if (hotelDTOList.size() == 0)
+            throw new NoHotelData();
+        else
+            for (HotelDTO hotel : hotelDTOList) {
+                newDateFrom = new Date(hotel.getDisponibilityDateFrom().getTime() + 3 * (3600 * 1000));
+                newDateTo = new Date(hotel.getDisponibilityDateTo().getTime() + 3 * (3600 * 1000));
+                hotel.setDisponibilityDateFrom(newDateFrom);
+                hotel.setDisponibilityDateTo(newDateTo);
+            }
+
+        return hotelDTOList;
     }
 
-    public List<HotelDTO> getListedHotels(String dateFrom, String dateTo, String destination) throws Exception {
+    public List<HotelDTO> getListedHotels(String datefrom, String dateto, String destination) throws Exception {
 
-        Date datefrom = new Date();
-        Date dateto = new Date();
+        Date dateFrom = new SimpleDateFormat("dd/MM/yyyy").parse(datefrom);
+        Date dateTo = new SimpleDateFormat("dd/MM/yyyy").parse(dateto);
 
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            datefrom = formatter.parse(dateFrom);
-            dateto = formatter.parse(dateTo);
+        List<HotelDTO> filteredList = new ArrayList<>();
+        for (HotelDTO hotel : getHotels()) {
+            if (dateFrom.after(hotel.getDisponibilityDateFrom()) && dateTo.before(hotel.getDisponibilityDateTo()) && destination.equalsIgnoreCase(hotel.getPlace()))
+                filteredList.add(hotel);
+        }
 
-        List<Hotel> hotelList = repo.findListedHotels(datefrom, dateto, destination);
+        if (filteredList.size() == 0)
+            throw new NoHotelData();
 
-        List<HotelDTO>  hotelDTOList = hotelList.stream().map(hotelDTO -> mapper.map(hotelDTO, HotelDTO.class)).collect(Collectors.toList());
-        if(hotelDTOList.size()==0)
-            throw new NoData("There are no registered flights for the requested timeframe, origin or destination");
-    return hotelDTOList;
+        return filteredList;
     }
 
     // BAJAS
-    public StatusDTO deleteHotelByHotelCode(String hotelCode) throws UnableToDelete, NoHotelFound {
+    public StatusDTO deleteHotelByHotelCode(String hotelCode) throws UnableToDeleteHotel, NoHotelFound {
         Hotel hotel = repo.findByHotelCode(hotelCode);
         if (hotel == null) {
             throw new NoHotelFound();
         }
         List<HotelBooking> hotelBookingList = bookingRepo.findAll();
-        for (HotelBooking hb:hotelBookingList) {
-            if(hb.getHotel().getHotelCode().equals(hotelCode))
-                //"No se puede dar de baja el hotel. Existe una reserva activa que lo contiene."
-                throw new UnableToDelete();
+        for (HotelBooking hb : hotelBookingList) {
+            if (hb.getHotel().getHotelCode().equals(hotelCode))
+                throw new UnableToDeleteHotel();
         }
         repo.delete(hotel);
-        return new StatusDTO("Hotel dado de baja correctamente");
+        return new StatusDTO("Hotel dado de baja correctamente.");
     }
 
 }

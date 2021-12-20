@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FlightReservationDTO {
 
+    private String username;
     private Integer id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date goingDate;
@@ -27,9 +28,9 @@ public class FlightReservationDTO {
     private String seatType;
     private List<PersonDTO> peopleFlight;
     private PaymentMethodDTO paymentMethod;
-    private FlightDTO flight;
 
-    public FlightReservationDTO(Date goingDate, Date returnDate, String origin, String destination, String flightNumber, Integer seats, String seatType, List<PersonDTO> peopleFlight, PaymentMethodDTO paymentMethod, FlightDTO flight) {
+    public FlightReservationDTO(String username, Date goingDate, Date returnDate, String origin, String destination, String flightNumber, Integer seats, String seatType, List<PersonDTO> peopleFlight, PaymentMethodDTO paymentMethod, FlightDTO flight) {
+        this.username = username;
         this.goingDate = goingDate;
         this.returnDate = returnDate;
         this.origin = origin;
@@ -39,6 +40,5 @@ public class FlightReservationDTO {
         this.seatType = seatType;
         this.peopleFlight = peopleFlight;
         this.paymentMethod = paymentMethod;
-        this.flight = flight;
     }
 }
