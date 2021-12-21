@@ -28,6 +28,7 @@ public class Flight {
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date returnDate;
 
+
     public Flight(String flightNumber, String name, String origin, String destination, String seatType, double flightPrice, Date goingDate, Date returnDate) {
         this.flightNumber = flightNumber;
         this.name = name;

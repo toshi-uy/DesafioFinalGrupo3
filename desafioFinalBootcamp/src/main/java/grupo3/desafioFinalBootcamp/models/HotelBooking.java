@@ -42,6 +42,14 @@ public class HotelBooking {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+
+
+    @Temporal(TemporalType.DATE)
+    private Date bookingDate;
+
+    private Double price;
+
 
     public HotelBooking(Date datefrom, Date dateto, String destination, String hotelcode, Integer peopleAmount, String roomType, List<Person> people, PaymentMethod paymentMethod) {
         this.dateFrom = datefrom;

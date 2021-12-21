@@ -3,6 +3,7 @@ package grupo3.desafioFinalBootcamp.controller;
 import grupo3.desafioFinalBootcamp.exceptions.*;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
+import grupo3.desafioFinalBootcamp.models.DTOs.IncomeResponseDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import grupo3.desafioFinalBootcamp.services.ReservationService;
 import org.springframework.http.HttpStatus;
@@ -65,6 +66,21 @@ public class ReservationController {
     public ResponseEntity<List<HotelBookingDTO>> getHotelBookings() throws Exception {
 
         return new ResponseEntity<>(service.getHotelBookings(), HttpStatus.OK);
+    }
+
+    @GetMapping("/income")
+    public ResponseEntity<IncomeResponseDTO> getIncome(@RequestParam(required = false) String date, @RequestParam(required = false) Integer month, @RequestParam(required = false) Integer year) throws Exception {
+
+        if (date == null && month == null && year == null)
+            throw new Exception("Please enter the parameters for this request");
+        else if (date != null && month != null && year != null)
+            throw new Exception("Please enter the date or the month and year");
+        else if (date != null && (month != null || year != null))
+            throw new Exception("Please enter the date or the month and year");
+        else if (date != null && month == null && year == null)
+            return new ResponseEntity<>(service.getIncomeByDay(date), HttpStatus.OK);
+        else
+            return new ResponseEntity<>(service.getIncomeByMonth(month, year), HttpStatus.OK);
     }
 
 
