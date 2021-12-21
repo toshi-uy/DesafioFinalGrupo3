@@ -78,6 +78,13 @@ public class ControllerAdvice {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(PackageNotFound.class)
+    public ResponseEntity<StatusDTO> NoPackage(PackageNotFound ex) {
+        StatusDTO error = new StatusDTO();
+        error.setMessage(ex.ERROR);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(NoHotelData.class)
     public ResponseEntity<StatusDTO> noHotelData(NoHotelData ex) {
         StatusDTO error = new StatusDTO();
@@ -101,6 +108,13 @@ public class ControllerAdvice {
 
     @ExceptionHandler(NoFlightData.class)
     public ResponseEntity<StatusDTO> noFlightData(NoFlightData ex) {
+        StatusDTO error = new StatusDTO();
+        error.setMessage(ex.ERROR);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(NoPackages.class)
+    public ResponseEntity<StatusDTO> noPackages(NoPackages ex) {
         StatusDTO error = new StatusDTO();
         error.setMessage(ex.ERROR);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);

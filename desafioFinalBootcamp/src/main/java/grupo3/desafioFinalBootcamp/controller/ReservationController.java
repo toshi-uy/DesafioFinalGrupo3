@@ -1,9 +1,6 @@
 package grupo3.desafioFinalBootcamp.controller;
 
-import grupo3.desafioFinalBootcamp.exceptions.DuplicateBooking;
-import grupo3.desafioFinalBootcamp.exceptions.DuplicateReservation;
-import grupo3.desafioFinalBootcamp.exceptions.NoBookingFound;
-import grupo3.desafioFinalBootcamp.exceptions.NoReservationFound;
+import grupo3.desafioFinalBootcamp.exceptions.*;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
@@ -17,6 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 public class ReservationController {
+    public static Integer reservationId = 0;
+
     private ReservationService service;
 
     public ReservationController(ReservationService service) {
@@ -25,12 +24,12 @@ public class ReservationController {
 
     // ALTAS
     @PostMapping("/hotel-booking/new")
-    public ResponseEntity<StatusDTO> addHotelBooking(@RequestBody HotelBookingDTO booking) throws DuplicateBooking {
+    public ResponseEntity<StatusDTO> addHotelBooking(@RequestBody HotelBookingDTO booking) throws DuplicateBooking, NoHotelFound {
         return new ResponseEntity<>(service.addBooking(booking), HttpStatus.OK);
     }
 
     @PostMapping("/flight-reservation/new")
-    public ResponseEntity<StatusDTO> addFlightReservation(@RequestBody FlightReservationDTO reservation) throws DuplicateReservation {
+    public ResponseEntity<StatusDTO> addFlightReservation(@RequestBody FlightReservationDTO reservation) throws DuplicateReservation, NoFlightFound {
         return new ResponseEntity<>(service.addReservation(reservation), HttpStatus.OK);
     }
 
