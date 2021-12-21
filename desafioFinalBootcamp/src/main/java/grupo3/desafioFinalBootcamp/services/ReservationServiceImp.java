@@ -1,10 +1,13 @@
 package grupo3.desafioFinalBootcamp.services;
 
 import grupo3.desafioFinalBootcamp.exceptions.*;
-import grupo3.desafioFinalBootcamp.models.*;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
+import grupo3.desafioFinalBootcamp.models.Flight;
+import grupo3.desafioFinalBootcamp.models.FlightReservation;
+import grupo3.desafioFinalBootcamp.models.Hotel;
+import grupo3.desafioFinalBootcamp.models.HotelBooking;
 import grupo3.desafioFinalBootcamp.repositories.FlightRepository;
 import grupo3.desafioFinalBootcamp.repositories.FlightReservationRepository;
 import grupo3.desafioFinalBootcamp.repositories.HotelBookingRepository;
@@ -12,6 +15,9 @@ import grupo3.desafioFinalBootcamp.repositories.HotelRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,21 +26,22 @@ public class ReservationServiceImp implements ReservationService {
 
     private final HotelBookingRepository bookingRepo;
     private final FlightReservationRepository reservationRepo;
-    private final HotelRepository hotelRepository;
-    private final FlightRepository flightRepository;
+    private final HotelRepository hotelRepo;
+    private final FlightRepository flightRepo;
     ModelMapper mapper = new ModelMapper();
 
-    public ReservationServiceImp(HotelBookingRepository bookingRepo, FlightReservationRepository reservationRepo, HotelRepository hotelRepository, FlightRepository flightRepository) {
+    public ReservationServiceImp(HotelBookingRepository bookingRepo, FlightReservationRepository reservationRepo, HotelRepository hotelRepo, FlightRepository flightRepo) {
         this.bookingRepo = bookingRepo;
         this.reservationRepo = reservationRepo;
-        this.hotelRepository = hotelRepository;
-        this.flightRepository = flightRepository;
+        this.hotelRepo = hotelRepo;
+        this.flightRepo = flightRepo;
+    ModelMapper mapper = new ModelMapper();
     }
 
     // ALTAS
     public StatusDTO addBooking(HotelBookingDTO booking) throws DuplicateBooking, NoHotelFound {
         List<HotelBooking> reservas = bookingRepo.findAll();
-        Hotel hotel = hotelRepository.findByHotelCode(booking.getHotelCode());
+        Hotel hotel = hotelRepo.findByHotelCode(booking.getHotelCode());
         if (hotel == null) {
             throw new NoHotelFound();
         }
@@ -50,13 +57,16 @@ public class ReservationServiceImp implements ReservationService {
         }
         HotelBooking nuevo = mapper.map(booking, HotelBooking.class);
         nuevo.setHotel(hotel);
+        nuevo.setBookingDate(new Date());
+        Hotel hotel = hotelRepo.findByHotelCode(booking.getHotelCode());
+        nuevo.setPrice(hotel.getRoomPrice());
         bookingRepo.save(nuevo);
         return new StatusDTO("Reserva de hotel creada con éxito.");
     }
 
     public StatusDTO addReservation(FlightReservationDTO reservation) throws DuplicateReservation, NoFlightFound {
         List<FlightReservation> reservas = reservationRepo.findAll();
-        Flight flight = flightRepository.findByFlightNumber(reservation.getFlightNumber());
+        Flight flight = flightRepo.findByFlightNumber(reservation.getFlightNumber());
         if (flight == null) {
             throw new NoFlightFound();
         }
@@ -70,7 +80,12 @@ public class ReservationServiceImp implements ReservationService {
                 throw new DuplicateReservation();
         }
         FlightReservation nuevo = mapper.map(reservation, FlightReservation.class);
-//        nuevo.setFlight(flight);
+        nuevo.setFlight(flight);
+        }
+        FlightReservation nuevo = mapper.map(reservation, FlightReservation.class);
+        nuevo.setBookingDate(new Date());
+        Flight vuelo = flightRepo.findByFlightNumber(reservation.getFlightNumber());
+        nuevo.setPrice(vuelo.getFlightPrice() * reservation.getSeats());
         reservationRepo.save(nuevo);
         return new StatusDTO("Reserva de vuelo creada con éxito.");
     }
@@ -129,5 +144,56 @@ public class ReservationServiceImp implements ReservationService {
         //verificar que no se encuentre en un paquete
         reservationRepo.deleteById(id);
         return new StatusDTO("Reserva de vuelo dada de baja correctamente");
+    }
+
+    //CAJA
+    public IncomeResponseDTO getIncomeByDay(String paramdate) throws Exception {
+
+        Date date = new SimpleDateFormat("dd/MM/yyyy").parse(paramdate);
+
+        List<FlightReservation> flightReservationList = reservationRepo.findAll();
+        List<HotelBooking> hotelBookingList = bookingRepo.findAll();
+
+        double income = 0.0;
+        for (FlightReservation reservation : flightReservationList) {
+            reservation.setBookingDate(new Date(reservation.getBookingDate().getTime() + 3 * (3600 * 1000)));
+            if (reservation.getBookingDate().equals(date))
+                income += reservation.getPrice();
+        }
+
+        for (HotelBooking booking : hotelBookingList) {
+            booking.setBookingDate(new Date(booking.getBookingDate().getTime() + 3 * (3600 * 1000)));
+            if (booking.getBookingDate().equals(date))
+                income += booking.getPrice();
+        }
+
+//        income += reservationRepo.getHotelFlightReservationsSumPerDay(date);
+//        income += bookingRepo.getHotelBookingSumPerDay(date);
+
+        IncomeResponseDTO incomeResponse = new IncomeResponseDTO(date, income);
+        return incomeResponse;
+
+    }
+
+    public IncomeResponseDTO getIncomeByMonth(int month, int year) throws Exception {
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, month - 1);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.YEAR, year);
+        Date firstmonth = cal.getTime();
+        cal.add(Calendar.MONTH, 1);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        Date lastmonth = cal.getTime();
+        double amount = 0;
+
+        amount = reservationRepo.getReservationSumPerMonth(firstmonth, lastmonth);
+        amount += bookingRepo.getBookingSumPerMonth(firstmonth, lastmonth);
+        IncomeResponseDTO incomeResponse = new IncomeResponseDTO(month, year, amount);
+        incomeResponse.setMonth(month);
+        incomeResponse.setYear(year);
+        incomeResponse.setTotal_income(amount);
+        return incomeResponse;
+
     }
 }
