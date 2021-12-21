@@ -1,9 +1,6 @@
 package grupo3.desafioFinalBootcamp.services;
 
-import grupo3.desafioFinalBootcamp.exceptions.DuplicateBooking;
-import grupo3.desafioFinalBootcamp.exceptions.DuplicateReservation;
-import grupo3.desafioFinalBootcamp.exceptions.NoBookingFound;
-import grupo3.desafioFinalBootcamp.exceptions.NoReservationFound;
+import grupo3.desafioFinalBootcamp.exceptions.*;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.IncomeResponseDTO;
@@ -12,9 +9,9 @@ import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import java.util.List;
 
 public interface ReservationService {
-    StatusDTO addBooking(HotelBookingDTO booking) throws DuplicateBooking;
+    StatusDTO addBooking(HotelBookingDTO booking) throws DuplicateBooking, NoHotelFound;
 
-    StatusDTO addReservation(FlightReservationDTO flight) throws DuplicateReservation;
+    StatusDTO addReservation(FlightReservationDTO flight) throws DuplicateReservation, NoFlightFound;
 
     StatusDTO deleteHotelBooking(Integer id);
 

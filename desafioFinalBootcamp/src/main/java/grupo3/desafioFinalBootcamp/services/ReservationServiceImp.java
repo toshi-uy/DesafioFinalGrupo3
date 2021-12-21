@@ -1,7 +1,9 @@
 package grupo3.desafioFinalBootcamp.services;
 
 import grupo3.desafioFinalBootcamp.exceptions.*;
-import grupo3.desafioFinalBootcamp.models.DTOs.*;
+import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
+import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
+import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import grupo3.desafioFinalBootcamp.models.Flight;
 import grupo3.desafioFinalBootcamp.models.FlightReservation;
 import grupo3.desafioFinalBootcamp.models.Hotel;
@@ -24,29 +26,37 @@ public class ReservationServiceImp implements ReservationService {
 
     private final HotelBookingRepository bookingRepo;
     private final FlightReservationRepository reservationRepo;
-    private final FlightRepository flightRepo;
     private final HotelRepository hotelRepo;
+    private final FlightRepository flightRepo;
     ModelMapper mapper = new ModelMapper();
 
-    public ReservationServiceImp(HotelBookingRepository bookingRepo, FlightReservationRepository reservationRepo, FlightRepository flightRepo, HotelRepository hotelRepo) {
+    public ReservationServiceImp(HotelBookingRepository bookingRepo, FlightReservationRepository reservationRepo, HotelRepository hotelRepo, FlightRepository flightRepo) {
         this.bookingRepo = bookingRepo;
         this.reservationRepo = reservationRepo;
-        this.flightRepo = flightRepo;
         this.hotelRepo = hotelRepo;
+        this.flightRepo = flightRepo;
+    ModelMapper mapper = new ModelMapper();
     }
 
     // ALTAS
-    public StatusDTO addBooking(HotelBookingDTO booking) throws DuplicateBooking {
+    public StatusDTO addBooking(HotelBookingDTO booking) throws DuplicateBooking, NoHotelFound {
         List<HotelBooking> reservas = bookingRepo.findAll();
+        Hotel hotel = hotelRepo.findByHotelCode(booking.getHotelCode());
+        if (hotel == null) {
+            throw new NoHotelFound();
+        }
         for (HotelBooking hb : reservas) {
             if (hb.getUsername().equals(booking.getUsername()) &&
-                    hb.getDateFrom().equals(booking.getDateFrom()) && hb.getDateTo().equals(booking.getDateTo()) &&
-                    hb.getDestination().equals(booking.getDestination()) && hb.getHotelCode().equals(booking.getHotelCode()) &&
-                    hb.getPeopleAmount() == booking.getPeopleAmount() && hb.getRoomType().equals(booking.getRoomType()) &&
-                    hb.getPeopleHotel().equals(booking.getPeopleHotel()) && hb.getPaymentmethod().equals(booking.getPaymentmethod()))
+                    hb.getDateFrom().compareTo(booking.getDateFrom()) == 0 &&
+                    hb.getDateTo().compareTo(booking.getDateTo()) == 0 &&
+                    hb.getDestination().equals(booking.getDestination()) &&
+                    hb.getHotelCode().equals(booking.getHotelCode()) &&
+                    hb.getPeopleAmount().equals(booking.getPeopleAmount()) &&
+                    hb.getRoomType().equals(booking.getRoomType()))
                 throw new DuplicateBooking();
         }
         HotelBooking nuevo = mapper.map(booking, HotelBooking.class);
+        nuevo.setHotel(hotel);
         nuevo.setBookingDate(new Date());
         Hotel hotel = hotelRepo.findByHotelCode(booking.getHotelCode());
         nuevo.setPrice(hotel.getRoomPrice());
@@ -54,18 +64,23 @@ public class ReservationServiceImp implements ReservationService {
         return new StatusDTO("Reserva de hotel creada con éxito.");
     }
 
-    public StatusDTO addReservation(FlightReservationDTO reservation) throws DuplicateReservation {
+    public StatusDTO addReservation(FlightReservationDTO reservation) throws DuplicateReservation, NoFlightFound {
         List<FlightReservation> reservas = reservationRepo.findAll();
+        Flight flight = flightRepo.findByFlightNumber(reservation.getFlightNumber());
+        if (flight == null) {
+            throw new NoFlightFound();
+        }
         for (FlightReservation fr : reservas) {
             if (fr.getFlightNumber().equals(reservation.getFlightNumber()) &&
-                    fr.getUserName().equals(reservation.getUsername()) &&
-                    fr.getGoingDate().equals(reservation.getGoingDate()) &&
-                    fr.getReturnDate().equals(reservation.getReturnDate()) &&
-                    fr.getOrigin().equals(reservation.getOrigin()) && fr.getDestination().equals(reservation.getDestination()) &&
-                    fr.getSeats() == reservation.getSeats() && fr.getSeatType().equals(reservation.getSeatType()) &&
-                    fr.getPeopleFlight().equals(reservation.getPeopleFlight()) &&
-                    fr.getPaymentMethod().equals(reservation.getPaymentMethod()))
+                fr.getUserName().equals(reservation.getUsername()) &&
+                fr.getGoingDate().compareTo(reservation.getGoingDate()) == 0 &&
+                fr.getReturnDate().compareTo(reservation.getReturnDate()) == 0 &&
+                fr.getOrigin().equals(reservation.getOrigin()) && fr.getDestination().equals(reservation.getDestination()) &&
+                fr.getSeats().equals(reservation.getSeats()) && fr.getSeatType().equals(reservation.getSeatType()))
                 throw new DuplicateReservation();
+        }
+        FlightReservation nuevo = mapper.map(reservation, FlightReservation.class);
+        nuevo.setFlight(flight);
         }
         FlightReservation nuevo = mapper.map(reservation, FlightReservation.class);
         nuevo.setBookingDate(new Date());
@@ -120,11 +135,13 @@ public class ReservationServiceImp implements ReservationService {
 
     // BAJAS
     public StatusDTO deleteHotelBooking(Integer id) {
+        //verificar que no se encuentre en un paquete
         bookingRepo.deleteById(id);
         return new StatusDTO("Reserva de hotel dada de baja correctamente");
     }
 
     public StatusDTO deleteFlightReservation(Integer id) {
+        //verificar que no se encuentre en un paquete
         reservationRepo.deleteById(id);
         return new StatusDTO("Reserva de vuelo dada de baja correctamente");
     }

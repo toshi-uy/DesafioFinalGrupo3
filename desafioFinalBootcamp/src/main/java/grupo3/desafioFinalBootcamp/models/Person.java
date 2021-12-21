@@ -1,17 +1,13 @@
 package grupo3.desafioFinalBootcamp.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "people")
@@ -28,7 +24,7 @@ public class Person {
     @ManyToMany(mappedBy = "peopleFlight", cascade = CascadeType.ALL)
     private List<FlightReservation> flightReservationList;
 
-    @ManyToMany(mappedBy = "peopleHotel", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "people", cascade = CascadeType.ALL)
     private List<HotelBooking> hotelBookingList;
 
     public Person(String dni, String name, String lastname, Date birthDate, String mail) {
