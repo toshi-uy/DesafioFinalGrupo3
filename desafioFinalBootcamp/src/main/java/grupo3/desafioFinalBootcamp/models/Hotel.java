@@ -24,7 +24,7 @@ public class Hotel {
     private String name;
     private String place;
     private String roomType;
-    private int roomPrice;
+    private double roomPrice;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date disponibilityDateFrom;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
