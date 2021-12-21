@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -27,6 +28,9 @@ public class Flight {
     private Date goingDate;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date returnDate;
+
+    @OneToMany(mappedBy = "flight", cascade = CascadeType.ALL)
+    private List<FlightReservation> flightReservation_flight;
 
     public Flight(String flightNumber, String name, String origin, String destination, String seatType, double flightPrice, Date goingDate, Date returnDate) {
         this.flightNumber = flightNumber;
