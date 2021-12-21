@@ -46,6 +46,10 @@ public class FlightReservation {
     private Date bookingDate;
     private Double price;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "flight_id")
+    private Flight flight;
+
 
     public FlightReservation(String userName, Date goingDate, Date returnDate, String origin, String destination, String flightNumber, Integer seats, String seatType, List<Person> peopleFlight, PaymentMethod paymentMethod, Date bookingDate) {
         this.userName = userName;

@@ -3,6 +3,7 @@ package grupo3.desafioFinalBootcamp.services;
 import grupo3.desafioFinalBootcamp.exceptions.*;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
+import grupo3.desafioFinalBootcamp.models.DTOs.IncomeResponseDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import grupo3.desafioFinalBootcamp.models.Flight;
 import grupo3.desafioFinalBootcamp.models.FlightReservation;
@@ -55,11 +56,12 @@ public class ReservationServiceImp implements ReservationService {
                     hb.getRoomType().equals(booking.getRoomType()))
                 throw new DuplicateBooking();
         }
+        mapper.getConfiguration().setAmbiguityIgnored(true);
         HotelBooking nuevo = mapper.map(booking, HotelBooking.class);
         nuevo.setHotel(hotel);
         nuevo.setBookingDate(new Date());
-        Hotel hotel = hotelRepo.findByHotelCode(booking.getHotelCode());
-        nuevo.setPrice(hotel.getRoomPrice());
+        Hotel hotel1 = hotelRepo.findByHotelCode(booking.getHotelCode());
+        nuevo.setPrice(hotel1.getRoomPrice());
         bookingRepo.save(nuevo);
         return new StatusDTO("Reserva de hotel creada con éxito.");
     }
@@ -81,8 +83,6 @@ public class ReservationServiceImp implements ReservationService {
         }
         FlightReservation nuevo = mapper.map(reservation, FlightReservation.class);
         nuevo.setFlight(flight);
-        }
-        FlightReservation nuevo = mapper.map(reservation, FlightReservation.class);
         nuevo.setBookingDate(new Date());
         Flight vuelo = flightRepo.findByFlightNumber(reservation.getFlightNumber());
         nuevo.setPrice(vuelo.getFlightPrice() * reservation.getSeats());

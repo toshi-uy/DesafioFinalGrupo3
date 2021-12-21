@@ -3,6 +3,7 @@ package grupo3.desafioFinalBootcamp.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import grupo3.desafioFinalBootcamp.controller.ReservationController;
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -42,12 +43,10 @@ public class HotelBooking {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-
-
-    @Temporal(TemporalType.DATE)
+    @Nullable
     private Date bookingDate;
-
     private Double price;
 
 
