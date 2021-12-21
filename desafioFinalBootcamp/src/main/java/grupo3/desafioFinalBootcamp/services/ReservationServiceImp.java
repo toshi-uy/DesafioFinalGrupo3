@@ -133,10 +133,25 @@ public class ReservationServiceImp implements ReservationService {
     public IncomeResponseDTO getIncomeByDay(String paramdate) throws Exception {
 
         Date date = new SimpleDateFormat("dd/MM/yyyy").parse(paramdate);
-        Date newDate = new Date(date.getTime() - 3 * (3600 * 1000));
 
-        Double income = reservationRepo.getHotelFlightReservationsSumPerDay(newDate) ;
-        income += bookingRepo.getHotelBookingSumPerDay(newDate);
+        List<FlightReservation> flightReservationList = reservationRepo.findAll();
+        List<HotelBooking> hotelBookingList = bookingRepo.findAll();
+
+        double income = 0.0;
+        for (FlightReservation reservation : flightReservationList) {
+            reservation.setBookingDate(new Date(reservation.getBookingDate().getTime() + 3 * (3600 * 1000)));
+            if (reservation.getBookingDate().equals(date))
+                income += reservation.getPrice();
+        }
+
+        for (HotelBooking booking : hotelBookingList) {
+            booking.setBookingDate(new Date(booking.getBookingDate().getTime() + 3 * (3600 * 1000)));
+            if (booking.getBookingDate().equals(date))
+                income += booking.getPrice();
+        }
+
+//        income += reservationRepo.getHotelFlightReservationsSumPerDay(date);
+//        income += bookingRepo.getHotelBookingSumPerDay(date);
 
         IncomeResponseDTO incomeResponse = new IncomeResponseDTO(date, income);
         return incomeResponse;
@@ -148,16 +163,16 @@ public class ReservationServiceImp implements ReservationService {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, month - 1);
         cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.YEAR, year);
         Date firstmonth = cal.getTime();
         cal.add(Calendar.MONTH, 1);
         cal.add(Calendar.DAY_OF_MONTH, -1);
         Date lastmonth = cal.getTime();
-        Date firstyear = new SimpleDateFormat("dd/MM/yyyy").parse("01/01/" + year);
-        Date lastyear = new SimpleDateFormat("dd/MM/yyyy").parse("31/12/" + year);
+        double amount = 0;
 
-        double amount = reservationRepo.getReservationSumPerMonth(firstmonth, lastmonth, firstyear, lastyear);
-        amount += bookingRepo.getBookingSumPerMonth(firstmonth, lastmonth, firstyear, lastyear);
-        IncomeResponseDTO incomeResponse = new IncomeResponseDTO(month,year,amount);
+        amount = reservationRepo.getReservationSumPerMonth(firstmonth, lastmonth);
+        amount += bookingRepo.getBookingSumPerMonth(firstmonth, lastmonth);
+        IncomeResponseDTO incomeResponse = new IncomeResponseDTO(month, year, amount);
         incomeResponse.setMonth(month);
         incomeResponse.setYear(year);
         incomeResponse.setTotal_income(amount);

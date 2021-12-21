@@ -42,6 +42,7 @@ public class FlightReservation {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_method_id", referencedColumnName = "id")
+
     private PaymentMethod paymentMethod;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date bookingDate;

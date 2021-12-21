@@ -13,6 +13,6 @@ public interface HotelBookingRepository extends JpaRepository<HotelBooking, Inte
     @Query("SELECT sum(HB.price) FROM HotelBooking HB WHERE HB.bookingDate = :day")
     Double getHotelBookingSumPerDay(@Param("day") Date day);
 
-    @Query("SELECT sum(HB.price) FROM HotelBooking HB WHERE HB.bookingDate BETWEEN :firstmonth AND :lastmonth AND HB.bookingDate BETWEEN :firstyear AND :lastyear")
-    Double getBookingSumPerMonth(@Param("firstmonth") Date firstmonth,@Param("lastmonth") Date lastmonth, @Param("firstyear") Date firstyear, @Param("lastyear") Date lastyear);
+    @Query("SELECT sum(HB.price) FROM HotelBooking HB WHERE HB.bookingDate BETWEEN :firstmonthyear AND :lastmonthyear")
+    Double getBookingSumPerMonth(@Param("firstmonthyear") Date firstmonthyear, @Param("lastmonthyear") Date lastmonthyear);
 }
