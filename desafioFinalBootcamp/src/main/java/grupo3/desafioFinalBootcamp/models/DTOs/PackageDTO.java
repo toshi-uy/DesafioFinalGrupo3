@@ -15,5 +15,5 @@ public class PackageDTO {
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date creation_date;
     private Integer client_id;
-    private BookResId bookingsOrReservationsId;
+    private BookResId bookingsOrReservations;
 }

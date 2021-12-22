@@ -23,7 +23,7 @@ public class TouristicPackageController {
         this.service = service;
     }
 
-    @PostMapping("/touristicpackage/new/")
+    @PostMapping("/touristicpackage/new")
     public ResponseEntity<StatusDTO> newPackage(@RequestBody PackageDTO packageDTO){
         return new ResponseEntity<>(service.newPackage(packageDTO), HttpStatus.OK);
     }

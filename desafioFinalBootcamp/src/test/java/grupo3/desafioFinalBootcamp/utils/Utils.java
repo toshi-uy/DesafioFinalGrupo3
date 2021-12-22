@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import grupo3.desafioFinalBootcamp.models.BookResId;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightDTO;
+import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelDTO;
+import grupo3.desafioFinalBootcamp.models.DTOs.PackageDTO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,6 +46,18 @@ public class Utils {
         return flightDTO;
     }
 
+    public static PackageDTO getPackageDTO(){
+        PackageDTO packageDTO = new PackageDTO();
+        packageDTO.setPackageNumber(999);
+        packageDTO.setName("TestPackage");
+
+        
+
+        BookResId bookResId = new BookResId();
+
+
+        return packageDTO;
+    }
 
     public static String getJsonPost() throws JsonProcessingException, ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");

@@ -60,13 +60,21 @@ public class TouristicPackageImp implements TouristicPackage {
     }
 
     public StatusDTO newPackage(PackageDTO packageDTO){
-        HotelBooking hb1 = hotelRepo.findById(packageDTO.getBookingsOrReservationsId().getBookResId1()).get();
-        FlightReservation fr1 = flightRepo.findById(packageDTO.getBookingsOrReservationsId().getBookResId1()).get();
+        try {
+            HotelBooking hb1 = hotelRepo.findById(packageDTO.getBookingsOrReservations().getBookResId1()).get();
+        } catch (Exception e){}
+        try {
+            FlightReservation fr1 = flightRepo.findById(packageDTO.getBookingsOrReservations().getBookResId1()).get();
+        } catch (Exception e){}
 //        if(hb1 == null && fr1 == null)
 //            throw new Exception(); //una nueva?
 
-        HotelBooking hb2 = hotelRepo.findById(packageDTO.getBookingsOrReservationsId().getBookResId2()).get();
-        FlightReservation fr2 = flightRepo.findById(packageDTO.getBookingsOrReservationsId().getBookResId2()).get();
+        try{
+            HotelBooking hb2 = hotelRepo.findById(packageDTO.getBookingsOrReservations().getBookResId2()).get();
+        } catch (Exception e){}
+        try{
+            FlightReservation fr2 = flightRepo.findById(packageDTO.getBookingsOrReservations().getBookResId2()).get();
+        } catch (Exception e){}
 //        if(hb2 == null && fr2 == null)
 //            throw new Exception(); //una nueva?
 

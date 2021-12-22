@@ -3,10 +3,7 @@ package grupo3.desafioFinalBootcamp.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.Date;
 
 @Data
@@ -18,7 +15,7 @@ public class Package {
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date creationDate;
     private Integer clientId;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "book_resId", referencedColumnName = "id")
     private BookResId bookingsOrReservationsId;
 }
