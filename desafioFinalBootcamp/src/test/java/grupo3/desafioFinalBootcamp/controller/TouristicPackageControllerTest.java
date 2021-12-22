@@ -9,15 +9,16 @@ import grupo3.desafioFinalBootcamp.exceptions.DuplicateFlightNumber;
 import grupo3.desafioFinalBootcamp.exceptions.DuplicateHotelCode;
 import grupo3.desafioFinalBootcamp.exceptions.DuplicateHotelId;
 import grupo3.desafioFinalBootcamp.models.BookResId;
+import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
+import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.PackageDTO;
 import grupo3.desafioFinalBootcamp.models.Flight;
 import grupo3.desafioFinalBootcamp.models.Hotel;
 import grupo3.desafioFinalBootcamp.models.Package;
-import grupo3.desafioFinalBootcamp.repositories.FlightRepository;
-import grupo3.desafioFinalBootcamp.repositories.HotelRepository;
-import grupo3.desafioFinalBootcamp.repositories.TouristicPackageRepository;
+import grupo3.desafioFinalBootcamp.repositories.*;
 import grupo3.desafioFinalBootcamp.services.FlightServiceImp;
 import grupo3.desafioFinalBootcamp.services.HotelServiceImp;
+import grupo3.desafioFinalBootcamp.services.ReservationServiceImp;
 import grupo3.desafioFinalBootcamp.services.TouristicPackage;
 import grupo3.desafioFinalBootcamp.utils.Utils;
 import org.junit.jupiter.api.AfterEach;
@@ -53,11 +54,20 @@ class TouristicPackageControllerTest {
     @Autowired
     FlightRepository flightRepo;
     @Autowired
+    ReservationServiceImp reservationService;
+    @Autowired
+    FlightReservationRepository flightReservationRepo;
+    @Autowired
+    HotelBookingRepository hotelBookingRepo;
+    @Autowired
     TouristicPackageRepository repo;
 
     @BeforeEach
-    void setUp() {
-
+    void setUp() throws Exception {
+        hotelService.addHotel(Utils.getHotelDTO());
+        flightService.addFlight(Utils.getFlightDTO());
+        reservationService.addBooking(Utils.getHotelBookingDTO());
+        reservationService.addReservation(Utils.getFlightReservationDTO());
     }
 
     @AfterEach
@@ -73,11 +83,11 @@ class TouristicPackageControllerTest {
     @Test
     void newPackage() throws Exception {
         PackageDTO packageDTO = Utils.getPackageDTO();
-        Integer hotId = hotelRepo.findByHotelCode("ABC123").getId();
-        Integer flightId = flightRepo.findByFlightNumber("ABC123").getId();
+        Integer id1 = hotelRepo.findByHotelCode("ABC123").getId();
+        Integer id2 = flightRepo.findByFlightNumber("ABC123").getId();
         BookResId bookResId = new BookResId();
-        bookResId.setBookResId1(hotId);
-        bookResId.setBookResId2(flightId);
+        bookResId.setBookResId1(id1);
+        bookResId.setBookResId2(id2);
         packageDTO.setBookingsOrReservations(bookResId);
 
         ObjectWriter writer = new ObjectMapper()

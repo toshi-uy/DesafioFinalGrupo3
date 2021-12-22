@@ -25,6 +25,6 @@ public class ReservationDTO {
     private String flightNumber;
     private Integer seats;
     private String seatType;
-    private List<Person> people;
-    private PaymentMethod paymentMethod;
+    private List<PersonDTO> people;
+    private PaymentMethodDTO paymentMethod;
 }

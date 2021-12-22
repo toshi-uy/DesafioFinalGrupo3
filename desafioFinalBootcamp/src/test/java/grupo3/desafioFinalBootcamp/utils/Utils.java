@@ -5,13 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import grupo3.desafioFinalBootcamp.models.BookResId;
-import grupo3.desafioFinalBootcamp.models.DTOs.FlightDTO;
-import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
-import grupo3.desafioFinalBootcamp.models.DTOs.HotelDTO;
-import grupo3.desafioFinalBootcamp.models.DTOs.PackageDTO;
+import grupo3.desafioFinalBootcamp.models.DTOs.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import static grupo3.desafioFinalBootcamp.utils.Utils.getFlightReservationDTO;
 
 public class Utils {
 
@@ -46,17 +47,85 @@ public class Utils {
         return flightDTO;
     }
 
-    public static PackageDTO getPackageDTO(){
+    public static PackageDTO getPackageDTO() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
         PackageDTO packageDTO = new PackageDTO();
         packageDTO.setPackageNumber(999);
         packageDTO.setName("TestPackage");
+        packageDTO.setCreation_date(formatter.parse("21/12/2021"));
 
-        
+//        HotelBookingDTO hb = getHotelBookingDTO();
+//        FlightReservationDTO fr = getFlightReservationDTO();
 
         BookResId bookResId = new BookResId();
-
-
+        packageDTO.setBookingsOrReservations(bookResId);
         return packageDTO;
+    }
+
+    public static FlightReservationDTO getFlightReservationDTO() throws ParseException {
+        FlightReservationDTO flightReservationDTO = new FlightReservationDTO();
+        flightReservationDTO.setUserName("test@user.com");
+        flightReservationDTO.setFlightReservation(getReservationDTO());
+        return flightReservationDTO;
+    }
+
+    private static ReservationDTO getReservationDTO() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        ReservationDTO reservationDTO = new ReservationDTO();
+        reservationDTO.setGoingDate(formatter.parse("25/06/2022"));
+        reservationDTO.setReturnDate(formatter.parse("30/06/2022"));
+        reservationDTO.setOrigin("MVD");
+        reservationDTO.setDestination("BUE");
+        reservationDTO.setFlightNumber("ABC123");
+        reservationDTO.setSeats(2);
+        reservationDTO.setSeatType("Economy");
+        reservationDTO.setPeople(getPeopleDTO());
+        reservationDTO.setPaymentMethod(getPaymentMethodDTO());
+        return reservationDTO;
+    }
+
+    public static HotelBookingDTO getHotelBookingDTO() throws ParseException {
+        HotelBookingDTO hotelBookingDTO = new HotelBookingDTO();
+        hotelBookingDTO.setUsername("test@user.com");
+        hotelBookingDTO.setBooking(getBookingDTO());
+        return hotelBookingDTO;
+    }
+
+    private static BookingDTO getBookingDTO() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        BookingDTO bookingDTO = new BookingDTO();
+        bookingDTO.setBookingId(999);
+        bookingDTO.setDateFrom(formatter.parse("25/06/2022"));
+        bookingDTO.setDateTo(formatter.parse("30/06/2022"));
+        bookingDTO.setDestination("MVD");
+        bookingDTO.setHotelCode("ABC1234");
+        bookingDTO.setPeopleAmount(1);
+        bookingDTO.setRoomType("Single");
+        bookingDTO.setPeople(getPeopleDTO());
+        bookingDTO.setPaymentMethod(getPaymentMethodDTO());
+        return bookingDTO;
+    }
+
+    private static PaymentMethodDTO getPaymentMethodDTO() {
+        PaymentMethodDTO paymentMethod = new PaymentMethodDTO("CC",
+                "4444-3333-2222-1111",
+                6);
+        return paymentMethod;
+    }
+
+    private static List<PersonDTO> getPeopleDTO() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        List<PersonDTO> people = new ArrayList<>();
+        people.add(new PersonDTO("12345",
+                "test",
+                "user",
+                formatter.parse("02/03/1999"),
+                "test@user.com"));
+        return people;
     }
 
     public static String getJsonPost() throws JsonProcessingException, ParseException {

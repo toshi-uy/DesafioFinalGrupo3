@@ -1,6 +1,7 @@
 package grupo3.desafioFinalBootcamp.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,5 +18,6 @@ public class Package {
     private Integer clientId;
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "book_resId", referencedColumnName = "id")
+    @JsonIgnore
     private BookResId bookingsOrReservationsId;
 }
