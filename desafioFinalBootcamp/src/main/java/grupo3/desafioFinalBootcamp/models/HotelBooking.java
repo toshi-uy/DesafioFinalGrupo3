@@ -21,7 +21,7 @@ public class HotelBooking {
     private Integer id;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "fk_booking", nullable = false)
+    @JoinColumn(name = "bookingId", nullable = false)
     private Booking booking;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")

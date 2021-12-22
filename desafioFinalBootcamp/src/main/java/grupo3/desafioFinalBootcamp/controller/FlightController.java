@@ -48,7 +48,7 @@ public class FlightController {
 
     // MODIFICACIONES
     @PutMapping("/edit")
-    public ResponseEntity<StatusDTO> editHotelByCode(@RequestParam String hotelCode, @RequestBody FlightDTO flightDTO) throws NoFlightFound {
-        return new ResponseEntity<>(flightService.editFlightByCode(hotelCode, flightDTO), HttpStatus.OK);
+    public ResponseEntity<StatusDTO> editByFlightNumber(@RequestParam String flightNumber, @RequestBody FlightDTO flightDTO) throws NoFlightFound {
+        return new ResponseEntity<>(flightService.editFlightByCode(flightNumber, flightDTO), HttpStatus.OK);
     }
 }

@@ -16,10 +16,7 @@ import java.util.Set;
 @Entity
 public class Reservation {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "fk_reservation")
     private Integer reservationId;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date goingDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
@@ -35,7 +32,7 @@ public class Reservation {
             name = "reservation_people",
             joinColumns = @JoinColumn(name = "reservation_id"),
             inverseJoinColumns = @JoinColumn(name = "people_id"))
-    private Set<Person> people;
+    private List<Person> people;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "payment_method_id", referencedColumnName = "id")

@@ -15,7 +15,6 @@ import java.util.List;
 @Entity
 public class Booking {
     @Id
-    @Column(name = "fk_booking")
     private Integer bookingId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     private Date dateFrom;
