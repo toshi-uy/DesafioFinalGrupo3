@@ -38,7 +38,7 @@ public class Utils {
                 "TestSeat",
                 1000,
                 formatter.parse("01/01/2022"),
-                formatter.parse("02/01/2022")
+                formatter.parse("10/01/2022")
                 );
         return flightDTO;
     }
