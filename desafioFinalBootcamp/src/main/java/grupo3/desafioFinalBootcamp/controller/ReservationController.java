@@ -25,12 +25,12 @@ public class ReservationController {
 
     // ALTAS
     @PostMapping("/hotel-booking/new")
-    public ResponseEntity<StatusDTO> addHotelBooking(@RequestBody HotelBookingDTO booking) throws DuplicateBooking, NoHotelFound {
+    public ResponseEntity<StatusDTO> addHotelBooking(@RequestBody HotelBookingDTO booking) throws DuplicateBooking, NoHotelFound, Exception {
         return new ResponseEntity<>(service.addBooking(booking), HttpStatus.OK);
     }
 
     @PostMapping("/flight-reservation/new")
-    public ResponseEntity<StatusDTO> addFlightReservation(@RequestBody FlightReservationDTO reservation) throws DuplicateReservation, NoFlightFound {
+    public ResponseEntity<StatusDTO> addFlightReservation(@RequestBody FlightReservationDTO reservation) throws DuplicateReservation, NoFlightFound, Exception {
         return new ResponseEntity<>(service.addReservation(reservation), HttpStatus.OK);
     }
 

@@ -1,14 +1,11 @@
 package grupo3.desafioFinalBootcamp.services;
 
 import grupo3.desafioFinalBootcamp.exceptions.*;
+import grupo3.desafioFinalBootcamp.models.*;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.IncomeResponseDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
-import grupo3.desafioFinalBootcamp.models.Flight;
-import grupo3.desafioFinalBootcamp.models.FlightReservation;
-import grupo3.desafioFinalBootcamp.models.Hotel;
-import grupo3.desafioFinalBootcamp.models.HotelBooking;
 import grupo3.desafioFinalBootcamp.repositories.FlightRepository;
 import grupo3.desafioFinalBootcamp.repositories.FlightReservationRepository;
 import grupo3.desafioFinalBootcamp.repositories.HotelBookingRepository;
@@ -36,58 +33,136 @@ public class ReservationServiceImp implements ReservationService {
         this.reservationRepo = reservationRepo;
         this.hotelRepo = hotelRepo;
         this.flightRepo = flightRepo;
-    ModelMapper mapper = new ModelMapper();
+    }
+
+
+    private boolean hotelAvailability(Hotel hotel, Date desde, Date hasta) {
+        if (hotel != null && desde != null & hasta != null) {
+            return hotel.getIsBooking().equals("NO") && hotel.getDisponibilityDateFrom().compareTo(desde) <= 0 && hotel.getDisponibilityDateTo().compareTo(hasta) >= 0;
+        }
+        return false;
+    }
+
+    private boolean hotelDestinationValidation(String destino) {
+        if (destino != null) {
+            for (Hotel h : hotelRepo.getAll()) {
+                if (h.getPlace().equals(destino))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean roomTypeValidation(int cantPersonas, String tipoHabitacion) {
+        if (tipoHabitacion != null) {
+            if (cantPersonas == 1 && tipoHabitacion.equals("Single"))
+                return true;
+            if (cantPersonas == 2 && tipoHabitacion.equals("Double"))
+                return true;
+            if (cantPersonas == 3 && tipoHabitacion.equals("Triple"))
+                return true;
+            if (cantPersonas > 3 && tipoHabitacion.equals("Múltiple"))
+                return true;
+            return false;
+        }
+        return false;
     }
 
     // ALTAS
-    public StatusDTO addBooking(HotelBookingDTO booking) throws DuplicateBooking, NoHotelFound {
-        List<HotelBooking> reservas = bookingRepo.findAll();
-        Hotel hotel = hotelRepo.findByHotelCode(booking.getHotelCode());
-        if (hotel == null) {
-            throw new NoHotelFound();
+    public StatusDTO addBooking(HotelBookingDTO booking) throws DuplicateBooking, NoHotelFound, Exception {
+        if (booking != null && booking.getBooking().getPeopleAmount() > 0) {
+            if (validarFechas(booking.getBooking().getDateFrom(), booking.getBooking().getDateTo())) {
+                if (hotelDestinationValidation(booking.getBooking().getDestination())) {
+                    if (roomTypeValidation(booking.getBooking().getPeopleAmount(), booking.getBooking().getRoomType())) {
+                        Hotel hotel = hotelRepo.findByHotelCode(booking.getBooking().getHotelCode());
+                        if (hotel == null) {
+                            throw new NoHotelFound();
+                        }
+
+                        List<HotelBooking> reservas = bookingRepo.findAll();
+                        for (HotelBooking hb : reservas) {
+                            if (hb.getUsername().equals(booking.getUsername()) &&
+                                    hb.getBooking().getDateFrom().compareTo(booking.getBooking().getDateFrom()) == 0 &&
+                                    hb.getBooking().getDateTo().compareTo(booking.getBooking().getDateTo()) == 0 &&
+                                    hb.getBooking().getDestination().equals(booking.getBooking().getDestination()) &&
+                                    hb.getBooking().getHotelCode().equals(booking.getBooking().getHotelCode()) &&
+                                    hb.getBooking().getPeopleAmount().equals(booking.getBooking().getPeopleAmount()) &&
+                                    hb.getBooking().getRoomType().equals(booking.getBooking().getRoomType()))
+                                throw new DuplicateBooking();
+                        }
+                        mapper.getConfiguration().setAmbiguityIgnored(true);
+                        HotelBooking nuevo = mapper.map(booking, HotelBooking.class);
+                        Booking nuevoBooking = mapper.map(booking.getBooking(), Booking.class);
+                        nuevo.setBookingDate(new Date());
+                        Hotel hotel1 = hotelRepo.findByHotelCode(booking.getBooking().getHotelCode());
+                        nuevo.setPrice(hotel1.getRoomPrice());
+                        nuevo.setId(booking.getBooking().getBookingId());
+                        bookingRepo.save(nuevo);
+                        return new StatusDTO("Reserva de hotel creada con éxito.");
+                    }
+                    throw new Exception();
+                }
+                throw new Exception();
+            }
+            throw new Exception();
         }
-        for (HotelBooking hb : reservas) {
-            if (hb.getUsername().equals(booking.getUsername()) &&
-                    hb.getDateFrom().compareTo(booking.getDateFrom()) == 0 &&
-                    hb.getDateTo().compareTo(booking.getDateTo()) == 0 &&
-                    hb.getDestination().equals(booking.getDestination()) &&
-                    hb.getHotelCode().equals(booking.getHotelCode()) &&
-                    hb.getPeopleAmount().equals(booking.getPeopleAmount()) &&
-                    hb.getRoomType().equals(booking.getRoomType()))
-                throw new DuplicateBooking();
-        }
-        mapper.getConfiguration().setAmbiguityIgnored(true);
-        HotelBooking nuevo = mapper.map(booking, HotelBooking.class);
-        nuevo.setHotel(hotel);
-        nuevo.setBookingDate(new Date());
-        Hotel hotel1 = hotelRepo.findByHotelCode(booking.getHotelCode());
-        nuevo.setPrice(hotel1.getRoomPrice());
-        bookingRepo.save(nuevo);
-        return new StatusDTO("Reserva de hotel creada con éxito.");
+        throw new Exception();
     }
 
-    public StatusDTO addReservation(FlightReservationDTO reservation) throws DuplicateReservation, NoFlightFound {
-        List<FlightReservation> reservas = reservationRepo.findAll();
-        Flight flight = flightRepo.findByFlightNumber(reservation.getFlightNumber());
-        if (flight == null) {
-            throw new NoFlightFound();
+    private boolean flightPlacesValidation(String origen, String destino) {
+        if (destino != null && origen != null) {
+            for (Flight f : flightRepo.getAll()) {
+                if (f.getOrigin().equals(origen) && f.getDestination().equals(destino))
+                    return true;
+            }
         }
-        for (FlightReservation fr : reservas) {
-            if (fr.getFlightNumber().equals(reservation.getFlightNumber()) &&
-                fr.getUserName().equals(reservation.getUsername()) &&
-                fr.getGoingDate().compareTo(reservation.getGoingDate()) == 0 &&
-                fr.getReturnDate().compareTo(reservation.getReturnDate()) == 0 &&
-                fr.getOrigin().equals(reservation.getOrigin()) && fr.getDestination().equals(reservation.getDestination()) &&
-                fr.getSeats().equals(reservation.getSeats()) && fr.getSeatType().equals(reservation.getSeatType()))
-                throw new DuplicateReservation();
+        return false;
+    }
+
+    private boolean validarFechas(Date desde, Date hasta) {
+        if (desde == null || hasta == null)
+            return false;
+        return desde.compareTo(hasta) < 0;
+    }
+
+    private boolean FlightAvailability(Flight vuelo, Date desde, Date hasta) {
+        if (vuelo != null && desde != null & hasta != null) {
+            return vuelo.getGoingDate().compareTo(desde) >= 0 && vuelo.getGoingDate().compareTo(hasta) <= 0 || vuelo.getReturnDate().compareTo(hasta) <= 0 && vuelo.getReturnDate().compareTo(desde) >= 0;
         }
-        FlightReservation nuevo = mapper.map(reservation, FlightReservation.class);
-        nuevo.setFlight(flight);
-        nuevo.setBookingDate(new Date());
-        Flight vuelo = flightRepo.findByFlightNumber(reservation.getFlightNumber());
-        nuevo.setPrice(vuelo.getFlightPrice() * reservation.getSeats());
-        reservationRepo.save(nuevo);
-        return new StatusDTO("Reserva de vuelo creada con éxito.");
+        return false;
+    }
+
+    public StatusDTO addReservation(FlightReservationDTO reservation) throws DuplicateReservation, NoFlightFound, Exception {
+        if (reservation != null && reservation.getFlightReservation().getSeats() > 0) {
+            if (validarFechas(reservation.getFlightReservation().getGoingDate(), reservation.getFlightReservation().getReturnDate())) {
+                if (flightPlacesValidation(reservation.getFlightReservation().getOrigin(), reservation.getFlightReservation().getDestination())) {
+                    Flight flight = flightRepo.findByFlightNumber(reservation.getFlightReservation().getFlightNumber());
+                    if (flight == null) {
+                        throw new NoFlightFound();
+                    }
+                    List<FlightReservation> reservas = reservationRepo.findAll();
+
+                    for (FlightReservation fr : reservas) {
+                        if (fr.getFlightReservation().getFlightNumber().equals(reservation.getFlightReservation().getFlightNumber()) &&
+                                fr.getUserName().equals(reservation.getUsername()) &&
+                                fr.getFlightReservation().getGoingDate().compareTo(reservation.getFlightReservation().getGoingDate()) == 0 &&
+                                fr.getFlightReservation().getReturnDate().compareTo(reservation.getFlightReservation().getReturnDate()) == 0 &&
+                                fr.getFlightReservation().getOrigin().equals(reservation.getFlightReservation().getOrigin()) && fr.getFlightReservation().getDestination().equals(reservation.getFlightReservation().getDestination()) &&
+                                fr.getFlightReservation().getSeats().equals(reservation.getFlightReservation().getSeats()) && fr.getFlightReservation().getSeatType().equals(reservation.getFlightReservation().getSeatType()))
+                            throw new DuplicateReservation();
+                    }
+                    FlightReservation nuevo = mapper.map(reservation, FlightReservation.class);
+                    nuevo.setBookingDate(new Date());
+                    Flight vuelo = flightRepo.findByFlightNumber(reservation.getFlightReservation().getFlightNumber());
+                    nuevo.setPrice(vuelo.getFlightPrice() * reservation.getFlightReservation().getSeats());
+                    reservationRepo.save(nuevo);
+                    return new StatusDTO("Reserva de vuelo creada con éxito.");
+                }
+                throw new Exception();
+            }
+            throw new Exception();
+        }
+        throw new Exception();
     }
 
     // MODIFICACIONES
@@ -97,7 +172,7 @@ public class ReservationServiceImp implements ReservationService {
             throw new NoBookingFound();
         }
         HotelBooking modified = mapper.map(hotelBookingDTO, HotelBooking.class);
-        modified.setId(id);
+        modified.getBooking().setBookingId(id);
         bookingRepo.save(modified);
         return new StatusDTO("Reserva de hotel modificada correctamente");
     }

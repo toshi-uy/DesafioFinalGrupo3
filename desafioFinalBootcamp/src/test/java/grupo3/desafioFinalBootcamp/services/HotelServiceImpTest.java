@@ -37,7 +37,7 @@ class HotelServiceImpTest {
     @Test
     void addHotel() throws DuplicateHotelCode, DuplicateHotelId, ParseException {
         HotelDTO hotel = Utils.getHotelDTO();
-        when(repo.findAll().size()).thenReturn(0);
+        when(repo.findAll()).thenReturn(new ArrayList<>());
 
         service.addHotel(hotel);
 

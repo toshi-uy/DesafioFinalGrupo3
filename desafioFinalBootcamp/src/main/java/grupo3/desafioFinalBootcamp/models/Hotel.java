@@ -26,8 +26,6 @@ public class Hotel {
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date disponibilityDateTo;
     private Boolean isBooking;
-    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
-    private List<HotelBooking> hotelBooking_hotel;
 
     public Hotel(String hotelCode, String name, String place, String roomType, int roomPrice, Date disponibilityDateFrom, Date disponibilityDateTo, boolean isBooking) {
         this.hotelCode = hotelCode;

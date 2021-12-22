@@ -1,10 +1,12 @@
 package grupo3.desafioFinalBootcamp.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -18,14 +20,15 @@ public class Person {
     private String dni;
     private String name;
     private String lastname;
+    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date birthDate;
     private String mail;
 
-    @ManyToMany(mappedBy = "peopleFlight", cascade = CascadeType.ALL)
-    private List<FlightReservation> flightReservationList;
+    @ManyToMany(mappedBy = "people", cascade = CascadeType.ALL)
+    private Set<Reservation> flightReservationList;
 
     @ManyToMany(mappedBy = "people", cascade = CascadeType.ALL)
-    private List<HotelBooking> hotelBookingList;
+    private Set<Booking> hotelBookingList;
 
     public Person(String dni, String name, String lastname, Date birthDate, String mail) {
         this.dni = dni;

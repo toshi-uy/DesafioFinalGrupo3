@@ -9,9 +9,9 @@ import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import java.util.List;
 
 public interface ReservationService {
-    StatusDTO addBooking(HotelBookingDTO booking) throws DuplicateBooking, NoHotelFound;
+    StatusDTO addBooking(HotelBookingDTO booking) throws DuplicateBooking, NoHotelFound, Exception;
 
-    StatusDTO addReservation(FlightReservationDTO flight) throws DuplicateReservation, NoFlightFound;
+    StatusDTO addReservation(FlightReservationDTO flight) throws DuplicateReservation, NoFlightFound, Exception;
 
     StatusDTO deleteHotelBooking(Integer id);
 

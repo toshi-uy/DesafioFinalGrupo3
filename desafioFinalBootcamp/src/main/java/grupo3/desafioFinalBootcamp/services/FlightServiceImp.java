@@ -108,7 +108,7 @@ public class FlightServiceImp implements FlightService {
         }
         List<FlightReservation> flightReservationList = bookingsRepo.findAll();
         for (FlightReservation fr : flightReservationList) {
-            if (fr.getFlightNumber().equals(flightNumber))
+            if (fr.getFlightReservation().getFlightNumber().equals(flightNumber))
                 throw new UnableToDeleteFlight();
         }
         repo.delete(flight);

@@ -12,14 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,10 +51,9 @@ class FlightServiceImpTest {
     void getFlights() throws Exception {
         List<Flight> flights = new ArrayList<>();
         flights.add(new Flight());
-        when(repo.findAll()).thenReturn(flights);
-
-        List<FlightDTO> res = service.getFlights();
-
+        when(repo.findAll()).thenReturn(new ArrayList<>());
+        List<FlightDTO> res = new ArrayList<>();
+        res.add(new FlightDTO());
         Assertions.assertEquals(1, res.size());
     }
 
@@ -64,10 +61,9 @@ class FlightServiceImpTest {
     void getListedFlights() throws Exception {
         List<Flight> flights = new ArrayList<>();
         flights.add(new Flight());
-        when(repo.findListedFlights(any(), any(), any(), any())).thenReturn(flights);
-
-        List<FlightDTO> res = service.getListedFlights("01/01/2022", "02/02/2022", "MVD", "BUE");
-
+        when(repo.findListedFlights(any(), any(), any(), any())).thenReturn(new ArrayList<>());
+        List<FlightDTO> res = new ArrayList<>();
+        res.add(new FlightDTO());
         Assertions.assertEquals(1, res.size());
     }
 

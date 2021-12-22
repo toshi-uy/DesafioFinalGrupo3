@@ -106,7 +106,7 @@ public class HotelServiceImp implements HotelService {
         }
         List<HotelBooking> hotelBookingList = bookingRepo.findAll();
         for (HotelBooking hb : hotelBookingList) {
-            if (hb.getHotel().getHotelCode().equals(hotelCode))
+//            if (hb.getHotel().getHotelCode().equals(hotelCode))
                 throw new UnableToDeleteHotel();
         }
         repo.delete(hotel);

@@ -116,7 +116,7 @@ class HotelControllerTest {
 
     @Test
     void deleteHotelOK() throws Exception {
-        mockMVc.perform(MockMvcRequestBuilders.delete("/api/v1/hotels/edit", "?hotelCode=CH-0002"))
+        mockMVc.perform(MockMvcRequestBuilders.delete("/api/v1/hotels/delete", "?hotelCode=CH-0002"))
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Hotel dado de baja correctamente."))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.hotels.length()").isEmpty());

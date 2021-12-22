@@ -1,5 +1,6 @@
 package grupo3.desafioFinalBootcamp.models.DTOs;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.util.Date;
@@ -14,10 +15,9 @@ public class PersonDTO {
     private String dni;
     private String name;
     private String lastname;
+    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date birthDate;
     private String mail;
-    private List<FlightReservationDTO> flightReservationList;
-    private List<HotelBookingDTO> hotelBookingList;
 
     public PersonDTO(String dni, String name, String lastname, Date birthDate, String mail) {
         this.dni = dni;
