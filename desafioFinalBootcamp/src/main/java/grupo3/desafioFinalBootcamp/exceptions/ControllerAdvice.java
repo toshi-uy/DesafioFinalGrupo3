@@ -119,4 +119,11 @@ public class ControllerAdvice {
         error.setMessage(ex.ERROR);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(MissingParameters.class)
+    public ResponseEntity<StatusDTO> missingParameters(MissingParameters ex) {
+        StatusDTO error = new StatusDTO();
+        error.setMessage(ex.ERROR);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
 }

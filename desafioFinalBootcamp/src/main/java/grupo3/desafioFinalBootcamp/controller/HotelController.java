@@ -38,7 +38,7 @@ public class HotelController {
 
         if (dateFrom == null || dateTo == null || destination == null)
             if (dateFrom != null || dateTo != null || destination != null)
-                throw new Exception("Please enter the 3 requested parameter: Date From, Date To and Destination");
+                throw new MissingParameters();
             else
                 return new ResponseEntity<>(service.getHotels(), HttpStatus.OK);
         return new ResponseEntity<>(service.getListedHotels(dateFrom, dateTo, destination), HttpStatus.OK);
