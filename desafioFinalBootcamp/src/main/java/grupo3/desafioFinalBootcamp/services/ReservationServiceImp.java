@@ -2,14 +2,9 @@ package grupo3.desafioFinalBootcamp.services;
 
 import grupo3.desafioFinalBootcamp.exceptions.*;
 import grupo3.desafioFinalBootcamp.models.*;
-import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
-import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
-import grupo3.desafioFinalBootcamp.models.DTOs.IncomeResponseDTO;
-import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
-import grupo3.desafioFinalBootcamp.repositories.FlightRepository;
-import grupo3.desafioFinalBootcamp.repositories.FlightReservationRepository;
-import grupo3.desafioFinalBootcamp.repositories.HotelBookingRepository;
-import grupo3.desafioFinalBootcamp.repositories.HotelRepository;
+import grupo3.desafioFinalBootcamp.models.DTOs.*;
+import grupo3.desafioFinalBootcamp.models.Package;
+import grupo3.desafioFinalBootcamp.repositories.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -22,17 +17,19 @@ import java.util.stream.Collectors;
 @Service
 public class ReservationServiceImp implements ReservationService {
 
-    private final HotelBookingRepository bookingRepo;
-    private final FlightReservationRepository reservationRepo;
-    private final HotelRepository hotelRepo;
-    private final FlightRepository flightRepo;
+        private final HotelBookingRepository bookingRepo;
+        private final FlightReservationRepository reservationRepo;
+        private final HotelRepository hotelRepo;
+        private final FlightRepository flightRepo;
+        private final TouristicPackageRepository tourpackage;
     ModelMapper mapper = new ModelMapper();
 
-    public ReservationServiceImp(HotelBookingRepository bookingRepo, FlightReservationRepository reservationRepo, HotelRepository hotelRepo, FlightRepository flightRepo) {
+    public ReservationServiceImp(HotelBookingRepository bookingRepo, FlightReservationRepository reservationRepo, HotelRepository hotelRepo, FlightRepository flightRepo, TouristicPackageRepository tourpackage) {
         this.bookingRepo = bookingRepo;
         this.reservationRepo = reservationRepo;
         this.hotelRepo = hotelRepo;
         this.flightRepo = flightRepo;
+        this.tourpackage = tourpackage;
     }
 
 
@@ -229,35 +226,45 @@ public class ReservationServiceImp implements ReservationService {
     }
 
     //CAJA
-    public IncomeResponseDTO getIncomeByDay(String paramdate) throws Exception {
+    public IncomeDayResponseDTO getIncomeByDay(String paramdate) throws Exception {
 
-        Date date = new SimpleDateFormat("dd/MM/yyyy").parse(paramdate);
+        Date date1 = new SimpleDateFormat("dd/MM/yyyy").parse(paramdate);
+        Date date2 = new SimpleDateFormat("dd/MM/yyyy").parse(paramdate);
+        date2 = new Date(date2.getTime() + 11 * (3600 * 1000));
 
         List<FlightReservation> flightReservationList = reservationRepo.findAll();
         List<HotelBooking> hotelBookingList = bookingRepo.findAll();
+        List<Package> touristicPackageList = tourpackage.findAll();
 
         double income = 0.0;
+
         for (FlightReservation reservation : flightReservationList) {
             reservation.setBookingDate(new Date(reservation.getBookingDate().getTime() + 3 * (3600 * 1000)));
-            if (reservation.getBookingDate().equals(date))
-                income += reservation.getPrice();
+            if (reservation.getBookingDate().compareTo(date1) >= 0 || reservation.getBookingDate().compareTo(date2) <= 0) {
+                for (Package pack : touristicPackageList)
+                    if (reservation.getId() == pack.getBookingsOrReservationsId().getBookResId1() || (reservation.getId() == pack.getBookingsOrReservationsId().getBookResId2()))
+                        income += (reservation.getPrice() * 0.90);
+                    else
+                        income += reservation.getPrice();
+            }
         }
 
         for (HotelBooking booking : hotelBookingList) {
             booking.setBookingDate(new Date(booking.getBookingDate().getTime() + 3 * (3600 * 1000)));
-            if (booking.getBookingDate().equals(date))
-                income += booking.getPrice();
+            if (booking.getBookingDate().compareTo(date1) >= 0 || booking.getBookingDate().compareTo(date2) <= 0) {
+                for (Package pack : touristicPackageList)
+                    if (booking.getId() == pack.getBookingsOrReservationsId().getBookResId1() || (booking.getId() == pack.getBookingsOrReservationsId().getBookResId2()))
+                        income += (booking.getPrice() * 0.90);
+                    else
+                        income += booking.getPrice();
+            }
         }
 
-//        income += reservationRepo.getHotelFlightReservationsSumPerDay(date);
-//        income += bookingRepo.getHotelBookingSumPerDay(date);
-
-        IncomeResponseDTO incomeResponse = new IncomeResponseDTO(date, income);
+        IncomeDayResponseDTO incomeResponse = new IncomeDayResponseDTO(date1, income);
         return incomeResponse;
-
     }
 
-    public IncomeResponseDTO getIncomeByMonth(int month, int year) throws Exception {
+    public IncomeMonthResponseDTO getIncomeByMonth(int month, int year) throws Exception {
 
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.MONTH, month - 1);
@@ -267,14 +274,29 @@ public class ReservationServiceImp implements ReservationService {
         cal.add(Calendar.MONTH, 1);
         cal.add(Calendar.DAY_OF_MONTH, -1);
         Date lastmonth = cal.getTime();
-        double amount = 0;
+        double income = 0;
 
-        amount = reservationRepo.getReservationSumPerMonth(firstmonth, lastmonth);
-        amount += bookingRepo.getBookingSumPerMonth(firstmonth, lastmonth);
-        IncomeResponseDTO incomeResponse = new IncomeResponseDTO(month, year, amount);
-        incomeResponse.setMonth(month);
-        incomeResponse.setYear(year);
-        incomeResponse.setTotal_income(amount);
+        List<HotelBooking> hotelBookingList = bookingRepo.getBookingSumPerMonth(firstmonth, lastmonth);
+        List<FlightReservation> flightReservationList = reservationRepo.getReservationSumPerMonth(firstmonth, lastmonth);
+        List<Package> touristicPackageList = tourpackage.findAll();
+
+        for (FlightReservation reservation : flightReservationList) {
+            for (Package pack : touristicPackageList)
+                if (reservation.getId() == pack.getBookingsOrReservationsId().getBookResId1() || (reservation.getId() == pack.getBookingsOrReservationsId().getBookResId2()))
+                    income += (reservation.getPrice() * 0.90);
+                else
+                    income += reservation.getPrice();
+        }
+
+        for (HotelBooking booking : hotelBookingList) {
+            for (Package pack : touristicPackageList)
+                if (booking.getId() == pack.getBookingsOrReservationsId().getBookResId1() || (booking.getId() == pack.getBookingsOrReservationsId().getBookResId2()))
+                    income += (booking.getPrice() * 0.90);
+                else
+                    income += booking.getPrice();
+        }
+
+        IncomeMonthResponseDTO incomeResponse = new IncomeMonthResponseDTO(month, year, income);
         return incomeResponse;
 
     }

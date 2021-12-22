@@ -1,10 +1,7 @@
 package grupo3.desafioFinalBootcamp.services;
 
 import grupo3.desafioFinalBootcamp.exceptions.*;
-import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
-import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
-import grupo3.desafioFinalBootcamp.models.DTOs.IncomeResponseDTO;
-import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
+import grupo3.desafioFinalBootcamp.models.DTOs.*;
 
 import java.util.List;
 
@@ -25,9 +22,9 @@ public interface ReservationService {
 
     List<FlightReservationDTO> getFlightReservations() throws Exception;
 
-    IncomeResponseDTO getIncomeByDay(String paramdate) throws Exception;
+    IncomeDayResponseDTO getIncomeByDay(String paramdate) throws Exception;
 
-     IncomeResponseDTO getIncomeByMonth(int month, int year) throws Exception;
+    IncomeMonthResponseDTO getIncomeByMonth(int month, int year) throws Exception;
 
 
 

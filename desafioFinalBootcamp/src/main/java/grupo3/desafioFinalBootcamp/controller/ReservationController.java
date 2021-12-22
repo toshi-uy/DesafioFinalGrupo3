@@ -3,7 +3,7 @@ package grupo3.desafioFinalBootcamp.controller;
 import grupo3.desafioFinalBootcamp.exceptions.*;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightReservationDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.HotelBookingDTO;
-import grupo3.desafioFinalBootcamp.models.DTOs.IncomeResponseDTO;
+import grupo3.desafioFinalBootcamp.models.DTOs.IncomeDayResponseDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import grupo3.desafioFinalBootcamp.services.ReservationService;
 import org.springframework.http.HttpStatus;
@@ -69,7 +69,7 @@ public class ReservationController {
     }
 
     @GetMapping("/income")
-    public ResponseEntity<IncomeResponseDTO> getIncome(@RequestParam(required = false) String date, @RequestParam(required = false) Integer month, @RequestParam(required = false) Integer year) throws Exception {
+    public ResponseEntity<Object> getIncome(@RequestParam(required = false) String date, @RequestParam(required = false) Integer month, @RequestParam(required = false) Integer year) throws Exception {
 
         if (date == null && month == null && year == null)
             throw new Exception("Please enter the parameters for this request");

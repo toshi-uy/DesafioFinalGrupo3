@@ -9,22 +9,17 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class IncomeResponseDTO {
+public class IncomeDayResponseDTO {
 
-    private int month;
-    private int year;
+    @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
     private Date date;
     private double total_income;
 
-    public IncomeResponseDTO(Date date, double total_income) {
+    public IncomeDayResponseDTO(Date date, double total_income) {
         this.date = date;
         this.total_income = total_income;
     }
 
 
-    public IncomeResponseDTO(int month, int year, double total_income) {
-        this.month = month;
-        this.year = year;
-        this.total_income = total_income;
-    }
+
 }
