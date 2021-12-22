@@ -1,9 +1,12 @@
 package grupo3.desafioFinalBootcamp.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -36,7 +39,6 @@ public class Booking {
     @JoinColumn(name = "fk_payment_method", nullable = false)
     private PaymentMethod paymentMethod;
 
-    @OneToOne(mappedBy = "booking", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonBackReference
+    @OneToOne(mappedBy = "booking", fetch = FetchType.EAGER)
     private HotelBooking hotelBooking;
 }
