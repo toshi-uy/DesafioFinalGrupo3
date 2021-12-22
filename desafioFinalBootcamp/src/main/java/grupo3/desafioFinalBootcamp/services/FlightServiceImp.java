@@ -89,7 +89,10 @@ public class FlightServiceImp implements FlightService {
 
         List<FlightDTO> flightDTOList = new ArrayList<>();
         for (FlightDTO flight : getFlights()) {
-            if (dateFrom.after(flight.getGoingDate()) && dateTo.before(flight.getReturnDate()) && destination.equalsIgnoreCase(flight.getOrigin())&& destination.equalsIgnoreCase(flight.getDestination()))
+            if (dateFrom.after(flight.getGoingDate()) &&
+                    dateTo.before(flight.getReturnDate()) &&
+                    origin.equalsIgnoreCase(flight.getOrigin())&&
+                    destination.equalsIgnoreCase(flight.getDestination()))
                 flightDTOList.add(flight);
         }
         if (flightDTOList.size() == 0)

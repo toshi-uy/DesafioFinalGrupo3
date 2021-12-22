@@ -1,9 +1,6 @@
 package grupo3.desafioFinalBootcamp.controller;
 
-import grupo3.desafioFinalBootcamp.exceptions.DuplicateFlightId;
-import grupo3.desafioFinalBootcamp.exceptions.DuplicateFlightNumber;
-import grupo3.desafioFinalBootcamp.exceptions.NoFlightFound;
-import grupo3.desafioFinalBootcamp.exceptions.UnableToDeleteFlight;
+import grupo3.desafioFinalBootcamp.exceptions.*;
 import grupo3.desafioFinalBootcamp.models.DTOs.FlightDTO;
 import grupo3.desafioFinalBootcamp.models.DTOs.StatusDTO;
 import grupo3.desafioFinalBootcamp.services.FlightService;
@@ -40,7 +37,7 @@ public class FlightController {
 
         if (dateFrom == null || dateTo == null || origin == null || destination == null)
             if (dateFrom != null || dateTo != null || destination != null)
-                throw new Exception("Please enter the 4 requested parameter: Date From, Date To, Origin and Destination");
+                throw new MissingParameters();
             else
                 return new ResponseEntity<>(flightService.getFlights(), HttpStatus.OK);
         return new ResponseEntity<>(flightService.getListedFlights(dateFrom, dateTo, origin, destination), HttpStatus.OK);
@@ -48,7 +45,7 @@ public class FlightController {
 
     // MODIFICACIONES
     @PutMapping("/edit")
-    public ResponseEntity<StatusDTO> editHotelByCode(@RequestParam String hotelCode, @RequestBody FlightDTO flightDTO) throws NoFlightFound {
-        return new ResponseEntity<>(flightService.editFlightByCode(hotelCode, flightDTO), HttpStatus.OK);
+    public ResponseEntity<StatusDTO> editHotelByCode(@RequestParam String flightCode, @RequestBody FlightDTO flightDTO) throws NoFlightFound {
+        return new ResponseEntity<>(flightService.editFlightByCode(flightCode, flightDTO), HttpStatus.OK);
     }
 }

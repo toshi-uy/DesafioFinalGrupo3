@@ -88,7 +88,9 @@ public class HotelServiceImp implements HotelService {
 
         List<HotelDTO> filteredList = new ArrayList<>();
         for (HotelDTO hotel : getHotels()) {
-            if (dateFrom.after(hotel.getDisponibilityDateFrom()) && dateTo.before(hotel.getDisponibilityDateTo()) && destination.equalsIgnoreCase(hotel.getPlace()))
+            if (dateFrom.after(hotel.getDisponibilityDateFrom()) &&
+                    dateTo.before(hotel.getDisponibilityDateTo()) &&
+                    destination.equalsIgnoreCase(hotel.getPlace()))
                 filteredList.add(hotel);
         }
 

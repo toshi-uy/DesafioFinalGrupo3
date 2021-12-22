@@ -113,8 +113,6 @@ class HotelControllerTest {
     @Test
     void getHotels_missingParams() throws Exception {
 
-        service.addHotel(Utils.getHotelDTO());
-
         mockMVc.perform(MockMvcRequestBuilders.get("/api/v1/hotels")
                         .param("dateFrom", "02/01/2022")
                         .param("dateTo", "01/02/2022")
@@ -122,7 +120,7 @@ class HotelControllerTest {
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message")
-                        .value("Por favor ingrese los 3 parametros requeridos"));
+                        .value("Por favor ingrese los todos parametros requeridos"));
     }
 
     @Test
@@ -174,9 +172,11 @@ class HotelControllerTest {
     @Test
     void deleteHotelOK() throws Exception {
 
-        service.addHotel(Utils.getHotelDTO());
+        HotelDTO hot = Utils.getHotelDTO();
+        hot.setHotelCode("DELETEME123");
+        service.addHotel(hot);
 
-        mockMVc.perform(MockMvcRequestBuilders.delete("/api/v1/hotels/delete?hotelCode=ABC123"))
+        mockMVc.perform(MockMvcRequestBuilders.delete("/api/v1/hotels/delete?hotelCode=DELETEME123"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Hotel dado de baja correctamente."));
