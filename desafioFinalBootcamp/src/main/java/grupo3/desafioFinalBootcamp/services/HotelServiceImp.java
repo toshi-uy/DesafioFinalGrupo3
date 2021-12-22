@@ -81,14 +81,15 @@ public class HotelServiceImp implements HotelService {
         return hotelDTOList;
     }
 
-    public List<HotelDTO> getListedHotels(String datefrom, String dateto, String destination) throws Exception {
+    public List<HotelDTO> getListedHotels(String dateFrom, String dateTo, String destination) throws Exception {
 
-        Date dateFrom = new SimpleDateFormat("dd/MM/yyyy").parse(datefrom);
-        Date dateTo = new SimpleDateFormat("dd/MM/yyyy").parse(dateto);
+        Date datefrom = new SimpleDateFormat("dd/MM/yyyy").parse(dateFrom);
+        Date dateto = new SimpleDateFormat("dd/MM/yyyy").parse(dateTo);
 
         List<HotelDTO> filteredList = new ArrayList<>();
         for (HotelDTO hotel : getHotels()) {
-            if (dateFrom.after(hotel.getDisponibilityDateFrom()) && dateTo.before(hotel.getDisponibilityDateTo()) && destination.equalsIgnoreCase(hotel.getPlace()))
+            if (datefrom.compareTo(hotel.getDisponibilityDateFrom()) >= 0 && dateto.compareTo(hotel.getDisponibilityDateTo()) <= 0 &&
+                    destination.equalsIgnoreCase(hotel.getPlace()))
                 filteredList.add(hotel);
         }
 
@@ -106,7 +107,7 @@ public class HotelServiceImp implements HotelService {
         }
         List<HotelBooking> hotelBookingList = bookingRepo.findAll();
         for (HotelBooking hb : hotelBookingList) {
-//            if (hb.getHotel().getHotelCode().equals(hotelCode))
+            if (hb.getBooking().getHotelCode().equals(hotelCode))
                 throw new UnableToDeleteHotel();
         }
         repo.delete(hotel);

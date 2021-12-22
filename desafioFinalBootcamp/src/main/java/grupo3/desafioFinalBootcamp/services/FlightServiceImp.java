@@ -89,14 +89,13 @@ public class FlightServiceImp implements FlightService {
 
         List<FlightDTO> flightDTOList = new ArrayList<>();
         for (FlightDTO flight : getFlights()) {
-            if (dateFrom.after(flight.getGoingDate()) && dateTo.before(flight.getReturnDate()) && destination.equalsIgnoreCase(flight.getOrigin())&& destination.equalsIgnoreCase(flight.getDestination()))
+            if (dateFrom.compareTo(flight.getGoingDate()) >= 0 && dateTo.compareTo(flight.getReturnDate()) <= 0 &&
+                    destination.equalsIgnoreCase(flight.getDestination()) && origin.equalsIgnoreCase(flight.getOrigin()))
                 flightDTOList.add(flight);
         }
         if (flightDTOList.size() == 0)
             throw new NoFlightData();
-
         return flightDTOList;
-
     }
 
     // BAJAS

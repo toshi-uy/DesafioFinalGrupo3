@@ -38,6 +38,6 @@ public class Reservation {
     @JoinColumn(name = "payment_method_id", referencedColumnName = "id")
     private PaymentMethod paymentMethod;
 
-    @OneToOne(mappedBy = "flightReservation", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "flightReservation", fetch = FetchType.EAGER)
     private FlightReservation reservation;
 }

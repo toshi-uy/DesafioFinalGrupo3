@@ -1,5 +1,6 @@
 package grupo3.desafioFinalBootcamp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,9 +20,11 @@ public class PaymentMethod {
     private int dues;
 
     @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL)
+    @JsonIgnore
     List<Booking> bookingList;
 
     @OneToMany(mappedBy = "paymentMethod", cascade = CascadeType.ALL)
+    @JsonIgnore
     List<Reservation> reservationList;
 
     public PaymentMethod(String type, String number, int dues) {

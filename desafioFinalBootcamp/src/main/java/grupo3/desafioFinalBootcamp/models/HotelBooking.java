@@ -22,6 +22,7 @@ public class HotelBooking {
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "bookingId", nullable = false)
+    @JsonManagedReference
     private Booking booking;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")

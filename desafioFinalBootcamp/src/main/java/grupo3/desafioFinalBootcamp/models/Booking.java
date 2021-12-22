@@ -37,5 +37,6 @@ public class Booking {
     private PaymentMethod paymentMethod;
 
     @OneToOne(mappedBy = "booking", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonBackReference
     private HotelBooking hotelBooking;
 }

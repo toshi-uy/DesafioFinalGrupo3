@@ -1,6 +1,7 @@
 package grupo3.desafioFinalBootcamp.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,9 +26,11 @@ public class Person {
     private String mail;
 
     @ManyToMany(mappedBy = "people", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Reservation> flightReservationList;
 
     @ManyToMany(mappedBy = "people", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Booking> hotelBookingList;
 
     public Person(String dni, String name, String lastname, Date birthDate, String mail) {

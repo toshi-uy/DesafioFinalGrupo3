@@ -12,7 +12,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/hotels")
-public class HotelController {
+public class
+HotelController {
 
     final HotelService service;
 
