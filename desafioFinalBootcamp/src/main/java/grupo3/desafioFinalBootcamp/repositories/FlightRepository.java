@@ -25,5 +25,5 @@ public interface FlightRepository extends JpaRepository<Flight, Integer> {
     List<Flight> findListedFlights(@Param("datefrom") Date datefrom, @Param("dateto") Date dateto, @Param("origin") String origin, @Param("destination") String destination);
 
     @Query("SELECT f FROM Flight f WHERE f.flightNumber LIKE :flightNumber")
-    Flight findByFlightNumber(@Param("flightNumber") String flighNumber);
+    Flight findByFlightNumber(@Param("flightNumber") String flightNumber);
 }

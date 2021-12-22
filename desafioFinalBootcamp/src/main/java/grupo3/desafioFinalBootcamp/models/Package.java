@@ -16,8 +16,8 @@ public class Package {
     private Integer packageNumber;
     private String name;
     @JsonFormat(pattern = "dd/MM/yyyy", timezone = "GMT-3")
-    private Date creation_date;
-    private Integer client_id;
+    private Date creationDate;
+    private Integer clientId;
     @OneToOne
     @JoinColumn(name = "book_resId", referencedColumnName = "id")
     private BookResId bookingsOrReservationsId;

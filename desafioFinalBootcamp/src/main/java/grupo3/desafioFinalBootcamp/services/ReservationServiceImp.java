@@ -38,7 +38,7 @@ public class ReservationServiceImp implements ReservationService {
 
     private boolean hotelAvailability(Hotel hotel, Date desde, Date hasta) {
         if (hotel != null && desde != null & hasta != null) {
-            return hotel.getIsBooking().equals("NO") && hotel.getDisponibilityDateFrom().compareTo(desde) <= 0 && hotel.getDisponibilityDateTo().compareTo(hasta) >= 0;
+            return hotel.getIsBooking().equals(false) && hotel.getDisponibilityDateFrom().compareTo(desde) <= 0 && hotel.getDisponibilityDateTo().compareTo(hasta) >= 0;
         }
         return false;
     }
@@ -61,9 +61,7 @@ public class ReservationServiceImp implements ReservationService {
                 return true;
             if (cantPersonas == 3 && tipoHabitacion.equals("Triple"))
                 return true;
-            if (cantPersonas > 3 && tipoHabitacion.equals("Múltiple"))
-                return true;
-            return false;
+            return cantPersonas > 3 && tipoHabitacion.equals("Múltiple");
         }
         return false;
     }
@@ -92,7 +90,6 @@ public class ReservationServiceImp implements ReservationService {
                         }
                         mapper.getConfiguration().setAmbiguityIgnored(true);
                         HotelBooking nuevo = mapper.map(booking, HotelBooking.class);
-                        Booking nuevoBooking = mapper.map(booking.getBooking(), Booking.class);
                         nuevo.setBookingDate(new Date());
                         Hotel hotel1 = hotelRepo.findByHotelCode(booking.getBooking().getHotelCode());
                         nuevo.setPrice(hotel1.getRoomPrice());
@@ -144,17 +141,19 @@ public class ReservationServiceImp implements ReservationService {
 
                     for (FlightReservation fr : reservas) {
                         if (fr.getFlightReservation().getFlightNumber().equals(reservation.getFlightReservation().getFlightNumber()) &&
-                                fr.getUserName().equals(reservation.getUsername()) &&
+                                fr.getUserName().equals(reservation.getUserName()) &&
                                 fr.getFlightReservation().getGoingDate().compareTo(reservation.getFlightReservation().getGoingDate()) == 0 &&
                                 fr.getFlightReservation().getReturnDate().compareTo(reservation.getFlightReservation().getReturnDate()) == 0 &&
                                 fr.getFlightReservation().getOrigin().equals(reservation.getFlightReservation().getOrigin()) && fr.getFlightReservation().getDestination().equals(reservation.getFlightReservation().getDestination()) &&
                                 fr.getFlightReservation().getSeats().equals(reservation.getFlightReservation().getSeats()) && fr.getFlightReservation().getSeatType().equals(reservation.getFlightReservation().getSeatType()))
                             throw new DuplicateReservation();
                     }
+                    mapper.getConfiguration().setAmbiguityIgnored(true);
                     FlightReservation nuevo = mapper.map(reservation, FlightReservation.class);
                     nuevo.setBookingDate(new Date());
                     Flight vuelo = flightRepo.findByFlightNumber(reservation.getFlightReservation().getFlightNumber());
                     nuevo.setPrice(vuelo.getFlightPrice() * reservation.getFlightReservation().getSeats());
+                    nuevo.setId(reservation.getFlightReservation().getReservationId());
                     reservationRepo.save(nuevo);
                     return new StatusDTO("Reserva de vuelo creada con éxito.");
                 }
@@ -171,9 +170,12 @@ public class ReservationServiceImp implements ReservationService {
         if (check == null) {
             throw new NoBookingFound();
         }
-        HotelBooking modified = mapper.map(hotelBookingDTO, HotelBooking.class);
-        modified.getBooking().setBookingId(id);
-        bookingRepo.save(modified);
+        mapper.getConfiguration().setAmbiguityIgnored(true);
+        check = mapper.map(hotelBookingDTO, HotelBooking.class);
+//        modified.setBookingDate(check.getBookingDate());
+//        modified.setPrice(check.getPrice());
+//        modified.setId(id);
+        bookingRepo.save(check);
         return new StatusDTO("Reserva de hotel modificada correctamente");
     }
 
@@ -182,7 +184,10 @@ public class ReservationServiceImp implements ReservationService {
         if (check == null) {
             throw new NoReservationFound();
         }
+        mapper.getConfiguration().setAmbiguityIgnored(true);
         FlightReservation modified = mapper.map(flightReservationDTO, FlightReservation.class);
+        modified.setBookingDate(check.getBookingDate());
+        modified.setPrice(check.getPrice());
         modified.setId(id);
         reservationRepo.save(modified);
         return new StatusDTO("Reserva de vuelo modificada correctamente");
@@ -192,6 +197,7 @@ public class ReservationServiceImp implements ReservationService {
     // CONSULTAS/LECTURAS
     public List<HotelBookingDTO> getHotelBookings() throws Exception {
         List<HotelBooking> hotelBookingList = bookingRepo.findAll();
+        mapper.getConfiguration().setAmbiguityIgnored(true);
         List<HotelBookingDTO> hotelBookingDTOList = hotelBookingList.stream().map(hotelBookingDTO -> mapper.map(hotelBookingDTO, HotelBookingDTO.class)).collect(Collectors.toList());
         if (hotelBookingDTOList.size() == 0)
             throw new NoHotelData();
@@ -202,6 +208,7 @@ public class ReservationServiceImp implements ReservationService {
     public List<FlightReservationDTO> getFlightReservations() throws Exception {
 
         List<FlightReservation> flightReservationList = reservationRepo.findAll();
+        mapper.getConfiguration().setAmbiguityIgnored(true);
         List<FlightReservationDTO> flightReservationDTOList = flightReservationList.stream().map(flightReservationDTO -> mapper.map(flightReservationDTO, FlightReservationDTO.class)).collect(Collectors.toList());
         if (flightReservationDTOList.size() == 0)
             throw new NoFlightFound();

@@ -40,18 +40,16 @@ class FlightServiceImpTest {
 
     @Test
     void editFlightByCode() throws NoFlightFound {
-        when(repo.findByFlightNumber(any())).thenReturn(new Flight());
+        when(repo.findByFlightNumber("String")).thenReturn(new Flight());
 
-        service.editFlightByCode(eq("test"), any());
+        service.editFlightByCode("String",new FlightDTO());
 
         verify(repo, atLeastOnce()).save(any());
     }
 
     @Test
     void getFlights() throws Exception {
-        List<Flight> flights = new ArrayList<>();
-        flights.add(new Flight());
-        when(repo.findAll()).thenReturn(new ArrayList<>());
+        when(repo.findAll()).thenReturn(new ArrayList<Flight>());
         List<FlightDTO> res = new ArrayList<>();
         res.add(new FlightDTO());
         Assertions.assertEquals(1, res.size());
@@ -59,8 +57,7 @@ class FlightServiceImpTest {
 
     @Test
     void getListedFlights() throws Exception {
-        List<Flight> flights = new ArrayList<>();
-        flights.add(new Flight());
+
         when(repo.findListedFlights(any(), any(), any(), any())).thenReturn(new ArrayList<>());
         List<FlightDTO> res = new ArrayList<>();
         res.add(new FlightDTO());

@@ -13,7 +13,6 @@ import java.util.List;
 public class PaymentMethod {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-//    @Column(name = "fk_payment_method")
     private Integer id;
     private String type;
     private String number;
@@ -42,7 +41,7 @@ public class PaymentMethod {
      *
      * @return calculates the porcentaje of interest depending on the amount of dues.
      */
-    public int calcularIntereses(){
+    public int calculateInterest(){
         if (dues == 1)
             return 0;
         if (dues <= 3)
